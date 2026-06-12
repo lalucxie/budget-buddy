@@ -6,49 +6,55 @@ import { useAuth } from "@/hooks/use-auth";
 const GOAL_EMOJIS = ["🎧", "👟", "✈️", "💻", "🎮", "👜"];
 
 const PETS = [
-  { id: "luna", emoji: "🐱", name: "Luna", species: "Cat", personality: "Luna keeps your coins safe with quiet dignity 🌙" },
-  { id: "mochi", emoji: "🐼", name: "Mochi", species: "Panda", personality: "Mochi turns every saved rupee into a little happy dance 🎋" },
-  { id: "kitsune", emoji: "🦊", name: "Kitsune", species: "Fox", personality: "Kitsune is cunning with cash and loves a good deal ✨" },
-  { id: "ribbit", emoji: "🐸", name: "Ribbit", species: "Frog", personality: "Ribbit hops into action whenever you overspend 🍃" },
+  { id: "luna",    emoji: "🐱", name: "Luna",    species: "Cat",   personality: "Luna keeps your coins safe with quiet dignity 🌙" },
+  { id: "mochi",   emoji: "🐼", name: "Mochi",   species: "Panda", personality: "Mochi turns every saved rupee into a little happy dance 🎋" },
+  { id: "kitsune", emoji: "🦊", name: "Kitsune", species: "Fox",   personality: "Kitsune is cunning with cash and loves a good deal ✨" },
+  { id: "ribbit",  emoji: "🐸", name: "Ribbit",  species: "Frog",  personality: "Ribbit hops into action whenever you overspend 🍃" },
 ];
 
 export default function Setup() {
-  const [step, setStep] = useState(1);
-  const [income, setIncome] = useState("");
-  const [goalName, setGoalName] = useState("");
+  const [step, setStep]           = useState(1);
+  const [income, setIncome]       = useState("");
+  const [goalName, setGoalName]   = useState("");
   const [goalAmount, setGoalAmount] = useState("");
   const [goalEmoji, setGoalEmoji] = useState("🎧");
-  const [pet, setPet] = useState("");
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState("");
+  const [pet, setPet]             = useState("");
+  const [saving, setSaving]       = useState(false);
+  const [error, setError]         = useState("");
   const navigate = useNavigate();
   const { user } = useAuth();
 
   async function handleFinish() {
-    if (!user) return;
+    if (!user) { setError("Not logged in — please go back and sign in again."); return; }
     setSaving(true);
     setError("");
 
-    const { error: profileErr } = await supabase.from("profiles").upsert({
-      user_id: user.id,
-      monthly_income: parseFloat(income) || 0,
-      pet_choice: pet,
-      onboarding_complete: true,
-    }, { onConflict: "user_id" });
+    const { error: profileErr } = await supabase
+      .from("profiles")
+      .upsert(
+        { user_id: user.id, monthly_income: parseFloat(income) || 0, pet_choice: pet, onboarding_complete: true },
+        { onConflict: "user_id" }
+      );
 
-    if (profileErr) { setError(profileErr.message); setSaving(false); return; }
+    if (profileErr) {
+      setError(`Couldn't save profile: ${profileErr.message}`);
+      setSaving(false);
+      return;
+    }
 
     if (goalName && goalAmount) {
-      await supabase.from("savings_goals").insert({
+      const { error: goalErr } = await supabase.from("savings_goals").insert({
         user_id: user.id,
         name: goalName,
         target_amount: parseFloat(goalAmount) || 0,
         current_amount: 0,
         emoji: goalEmoji,
       });
+      if (goalErr) console.warn("Goal save failed:", goalErr.message);
     }
 
-    navigate("/dashboard");
+    // Pass state so ProtectedRoute doesn't race-redirect back to /setup
+    navigate("/dashboard", { replace: true, state: { justCompletedSetup: true } });
   }
 
   const progressWidth = `${(step / 3) * 100}%`;
@@ -79,7 +85,6 @@ export default function Setup() {
             </h1>
             <p className="text-sm text-muted-foreground">tell us what you work with each month</p>
           </div>
-
           <div className="glass-card p-6 space-y-5">
             <div className="space-y-2">
               <label className="text-xs font-semibold text-foreground/70 uppercase tracking-wide">Monthly Income / Allowance</label>
@@ -97,7 +102,6 @@ export default function Setup() {
               </div>
               <p className="text-xs text-muted-foreground pl-1">stipend, pocket money, part-time gig — whatever comes in ✨</p>
             </div>
-
             <button
               data-testid="button-step1-next"
               onClick={() => setStep(2)}
@@ -120,7 +124,6 @@ export default function Setup() {
             </h1>
             <p className="text-sm text-muted-foreground">set your first savings goal — dream big bestie!</p>
           </div>
-
           <div className="glass-card p-6 space-y-5">
             <div className="space-y-2">
               <label className="text-xs font-semibold text-foreground/70 uppercase tracking-wide">Goal Name</label>
@@ -133,7 +136,6 @@ export default function Setup() {
                 className="w-full bg-white/50 border border-white/80 rounded-xl px-4 py-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 text-foreground placeholder:text-muted-foreground transition-all"
               />
             </div>
-
             <div className="space-y-2">
               <label className="text-xs font-semibold text-foreground/70 uppercase tracking-wide">Target Amount</label>
               <div className="relative">
@@ -149,7 +151,6 @@ export default function Setup() {
                 />
               </div>
             </div>
-
             <div className="space-y-2">
               <label className="text-xs font-semibold text-foreground/70 uppercase tracking-wide">Pick an emoji ✨</label>
               <div className="flex gap-2 flex-wrap">
@@ -169,30 +170,11 @@ export default function Setup() {
                 ))}
               </div>
             </div>
-
             <div className="flex gap-3">
-              <button
-                data-testid="button-step2-back"
-                onClick={() => setStep(1)}
-                className="flex-1 py-3.5 rounded-full border-2 border-white/60 bg-white/40 text-sm font-semibold text-muted-foreground hover:bg-white/60 transition-all"
-              >
-                ← back
-              </button>
-              <button
-                data-testid="button-step2-next"
-                onClick={() => setStep(3)}
-                className="flex-[2] gradient-btn py-3.5 text-base"
-              >
-                Next 🎯
-              </button>
+              <button data-testid="button-step2-back" onClick={() => setStep(1)} className="flex-1 py-3.5 rounded-full border-2 border-white/60 bg-white/40 text-sm font-semibold text-muted-foreground hover:bg-white/60 transition-all">← back</button>
+              <button data-testid="button-step2-next" onClick={() => setStep(3)} className="flex-[2] gradient-btn py-3.5 text-base">Next 🎯</button>
             </div>
-            <button
-              data-testid="button-step2-skip"
-              onClick={() => setStep(3)}
-              className="w-full text-xs text-muted-foreground hover:text-primary transition-colors"
-            >
-              skip for now →
-            </button>
+            <button data-testid="button-step2-skip" onClick={() => setStep(3)} className="w-full text-xs text-muted-foreground hover:text-primary transition-colors">skip for now →</button>
           </div>
         </div>
       )}
@@ -232,28 +214,20 @@ export default function Setup() {
                   <div className="text-xs text-muted-foreground">{p.species}</div>
                 </div>
                 <p className="text-[11px] text-muted-foreground leading-snug">{p.personality}</p>
-                {pet === p.id && (
-                  <div className="chrome-badge px-2 py-0.5 text-[10px] inline-block">selected ✓</div>
-                )}
+                {pet === p.id && <div className="chrome-badge px-2 py-0.5 text-[10px] inline-block">selected ✓</div>}
               </button>
             ))}
           </div>
 
           <div className="flex gap-3 pb-6">
-            <button
-              data-testid="button-step3-back"
-              onClick={() => setStep(2)}
-              className="flex-1 py-3.5 rounded-full border-2 border-white/60 bg-white/40 text-sm font-semibold text-muted-foreground hover:bg-white/60 transition-all"
-            >
-              ← back
-            </button>
+            <button data-testid="button-step3-back" onClick={() => setStep(2)} className="flex-1 py-3.5 rounded-full border-2 border-white/60 bg-white/40 text-sm font-semibold text-muted-foreground hover:bg-white/60 transition-all">← back</button>
             <button
               data-testid="button-finish-setup"
               onClick={handleFinish}
               disabled={!pet || saving}
               className="flex-[2] gradient-btn py-3.5 text-base disabled:opacity-40 disabled:cursor-not-allowed"
             >
-              {saving ? "setting up... ✨" : "Let's Go! 🚀"}
+              {saving ? "saving... ✨" : "Let's Go! 🚀"}
             </button>
           </div>
         </div>

@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, Navigate } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/use-auth";
 
@@ -12,12 +12,17 @@ export default function Landing() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
 
-  if (user) {
-    navigate("/dashboard");
-    return null;
-  }
+  // Redirect already-logged-in users — in an effect, never during render
+  useEffect(() => {
+    if (!authLoading && user) {
+      navigate("/dashboard", { replace: true });
+    }
+  }, [user, authLoading, navigate]);
+
+  if (authLoading) return null;
+  if (user) return null; // effect will redirect
 
   async function handleSignUp() {
     setError("");
@@ -40,7 +45,7 @@ export default function Landing() {
         .select("onboarding_complete")
         .eq("user_id", data.user.id)
         .maybeSingle();
-      navigate(profile?.onboarding_complete ? "/dashboard" : "/setup");
+      navigate(profile?.onboarding_complete ? "/dashboard" : "/setup", { replace: true });
     }
   }
 

@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Outlet, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Outlet, Navigate, useLocation } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -17,23 +17,26 @@ import NotFound from "@/pages/not-found";
 
 const queryClient = new QueryClient();
 
+const Loader = () => (
+  <div className="max-w-[430px] mx-auto min-h-screen flex items-center justify-center bg-gradient-to-br from-[#E8D5F5] to-[#FFD6E7]">
+    <div className="text-center space-y-3">
+      <div className="text-5xl float inline-block">💰</div>
+      <p className="text-muted-foreground text-sm font-medium animate-pulse">loading your vibe...</p>
+    </div>
+  </div>
+);
+
 function ProtectedRoute() {
   const { user, loading } = useAuth();
   const { profile, loading: profileLoading } = useProfile(user?.id);
+  const location = useLocation();
 
-  if (loading || profileLoading) {
-    return (
-      <div className="max-w-[430px] mx-auto min-h-screen flex items-center justify-center bg-gradient-to-br from-[#E8D5F5] to-[#FFD6E7]">
-        <div className="text-center space-y-3">
-          <div className="text-5xl float inline-block">💰</div>
-          <p className="text-muted-foreground text-sm font-medium animate-pulse">loading your vibe...</p>
-        </div>
-      </div>
-    );
-  }
+  // User just finished setup — trust the save, skip the profile re-check
+  const justCompletedSetup = (location.state as { justCompletedSetup?: boolean } | null)?.justCompletedSetup;
 
+  if (loading || profileLoading) return <Loader />;
   if (!user) return <Navigate to="/" replace />;
-  if (!profile?.onboarding_complete) return <Navigate to="/setup" replace />;
+  if (!justCompletedSetup && !profile?.onboarding_complete) return <Navigate to="/setup" replace />;
 
   return (
     <div className="max-w-[430px] mx-auto min-h-screen relative pb-24 shadow-2xl bg-gradient-to-br from-[#E8D5F5] to-[#FFD6E7] overflow-x-hidden">
@@ -45,19 +48,12 @@ function ProtectedRoute() {
 
 function SetupRoute() {
   const { user, loading } = useAuth();
+  const { profile, loading: profileLoading } = useProfile(user?.id);
 
-  if (loading) {
-    return (
-      <div className="max-w-[430px] mx-auto min-h-screen flex items-center justify-center bg-gradient-to-br from-[#E8D5F5] to-[#FFD6E7]">
-        <div className="text-center space-y-3">
-          <div className="text-5xl float inline-block">💰</div>
-          <p className="text-muted-foreground text-sm font-medium animate-pulse">loading your vibe...</p>
-        </div>
-      </div>
-    );
-  }
-
+  if (loading || profileLoading) return <Loader />;
   if (!user) return <Navigate to="/" replace />;
+  // Already completed onboarding — go straight to dashboard
+  if (profile?.onboarding_complete) return <Navigate to="/dashboard" replace />;
 
   return (
     <div className="max-w-[430px] mx-auto min-h-screen relative shadow-2xl bg-gradient-to-br from-[#E8D5F5] to-[#FFD6E7] overflow-x-hidden">
