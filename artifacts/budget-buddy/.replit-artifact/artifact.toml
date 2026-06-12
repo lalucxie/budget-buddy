@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Budget Buddy"
+version = "1.0.0"
+id = "artifacts/budget-buddy"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 18557
+
+[services.development]
+run = "pnpm --filter @workspace/budget-buddy run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/budget-buddy", "run", "build" ]
+publicDir = "artifacts/budget-buddy/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "18557"
+BASE_PATH = "/"
