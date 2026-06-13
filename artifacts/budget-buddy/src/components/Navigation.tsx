@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, Plus, Star, Footprints, User } from "lucide-react";
+import { Home, Plus, Star, Footprints, Sparkles } from "lucide-react";
 
 export function Navigation() {
   const location = useLocation();
@@ -28,9 +28,9 @@ export function Navigation() {
           <Footprints className={`w-6 h-6 transition-colors ${currentPath === '/pet' ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground'}`} />
           {currentPath === '/pet' && <div className="w-1 h-1 rounded-full bg-primary" />}
         </Link>
-        <Link to="/setup" className="flex flex-col items-center gap-1 group">
-          <User className={`w-6 h-6 transition-colors ${currentPath === '/setup' ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground'}`} />
-          {currentPath === '/setup' && <div className="w-1 h-1 rounded-full bg-primary" />}
+        <Link to="/insights" className="flex flex-col items-center gap-1 group">
+          <Sparkles className={`w-6 h-6 transition-colors ${currentPath === '/insights' ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground'}`} />
+          {currentPath === '/insights' && <div className="w-1 h-1 rounded-full bg-primary" />}
         </Link>
       </div>
     </div>
