@@ -83,10 +83,6 @@
   --text-6xl--line-height: 1;
   --text-7xl: 4.5rem;
   --text-7xl--line-height: 1;
-  --text-8xl: 6rem;
-  --text-8xl--line-height: 1;
-  --text-9xl: 8rem;
-  --text-9xl--line-height: 1;
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -95,116 +91,56 @@
 }
 
 :root {
-  --button-outline: rgba(0,0,0, .10);
-  --badge-outline: rgba(0,0,0, .05);
-  --opaque-button-border-intensity: -8;
-  --elevate-1: rgba(0,0,0, .03);
-  --elevate-2: rgba(0,0,0, .08);
-
-  --background: 280 60% 95%;
-  --foreground: 280 40% 20%;
-  --border: 280 30% 80%;
-  --input: 280 30% 85%;
-  --ring: 330 100% 71%;
-
-  --card: 0 0% 100%;
-  --card-foreground: 280 40% 20%;
-  --card-border: 0 0% 100%;
-
-  --popover: 0 0% 100%;
-  --popover-foreground: 280 40% 20%;
-  --popover-border: 0 0% 100%;
-
-  --primary: 330 100% 71%;
-  --primary-foreground: 0 0% 100%;
-
-  --secondary: 270 100% 72%;
-  --secondary-foreground: 0 0% 100%;
-
-  --muted: 280 30% 90%;
-  --muted-foreground: 280 20% 50%;
-
-  --accent: 270 100% 72%;
-  --accent-foreground: 0 0% 100%;
-
-  --destructive: 0 84% 60%;
-  --destructive-foreground: 0 0% 100%;
-
-  --sidebar: 0 0% 100%;
-  --sidebar-foreground: 280 40% 20%;
-  --sidebar-border: 280 30% 80%;
-  --sidebar-primary: 330 100% 71%;
-  --sidebar-primary-foreground: 0 0% 100%;
-  --sidebar-primary-border: hsl(330, 100%, 63%);
-  --sidebar-accent: 270 100% 72%;
-  --sidebar-accent-foreground: 0 0% 100%;
-  --sidebar-accent-border: hsl(270, 100%, 64%);
-  --sidebar-ring: 330 100% 71%;
-
-  --chart-1: 330 100% 71%;
-  --chart-2: 270 100% 72%;
-  --chart-3: 200 80% 65%;
-  --chart-4: 50 100% 65%;
-  --chart-5: 150 60% 55%;
-
-  --app-font-sans: 'Inter', sans-serif;
+  --radius: 0.625rem;
+  --app-font-sans: 'Plus Jakarta Sans', sans-serif;
   --app-font-serif: 'Plus Jakarta Sans', sans-serif;
-  --app-font-mono: Menlo, monospace;
-  --radius: 1rem;
+  --app-font-mono: 'Courier New', monospace;
 
-  --gradient-bg: linear-gradient(135deg, #E8D5F5 0%, #FFD6E7 100%);
   --gradient-primary: linear-gradient(135deg, #FF6B9D 0%, #B06EFF 100%);
-  --glow-pink: 0 0 20px rgba(255, 107, 157, 0.4), 0 4px 15px rgba(255, 107, 157, 0.2);
-  --glass-bg: rgba(255, 255, 255, 0.6);
-  --glass-border: 1.5px solid rgba(255, 255, 255, 0.6);
+  --gradient-bg: linear-gradient(135deg, #E8D5F5 0%, #FFD6E7 100%);
+  --glass-bg: rgba(255, 255, 255, 0.45);
+  --glass-border: 1.5px solid rgba(255, 255, 255, 0.7);
+  --glow-pink: 0 0 20px rgba(255, 107, 157, 0.3), 0 4px 15px rgba(176, 110, 255, 0.2);
 
-  --shadow-2xs: 0 2px 5px rgba(255, 107, 157, 0.1);
-  --shadow-xs: 0 4px 10px rgba(255, 107, 157, 0.15);
-  --shadow-sm: 0 6px 15px rgba(255, 107, 157, 0.2);
-  --shadow: 0 8px 20px rgba(255, 107, 157, 0.25);
-  --shadow-md: 0 10px 25px rgba(255, 107, 157, 0.3);
-  --shadow-lg: 0 15px 35px rgba(255, 107, 157, 0.35);
-  --shadow-xl: 0 20px 45px rgba(255, 107, 157, 0.4);
-  --shadow-2xl: 0 25px 55px rgba(255, 107, 157, 0.45);
-  --tracking-normal: 0em;
-  --spacing: 0.25rem;
-}
-
-.dark {
-  --background: 280 60% 95%;
-  --foreground: 280 40% 20%;
-  --border: 280 30% 80%;
-  --input: 280 30% 85%;
-  --ring: 330 100% 71%;
+  --background: 300 40% 96%;
+  --foreground: 270 20% 20%;
   --card: 0 0% 100%;
-  --card-foreground: 280 40% 20%;
+  --card-foreground: 270 20% 20%;
   --card-border: 0 0% 100%;
   --popover: 0 0% 100%;
-  --popover-foreground: 280 40% 20%;
+  --popover-foreground: 270 20% 20%;
   --popover-border: 0 0% 100%;
   --primary: 330 100% 71%;
   --primary-foreground: 0 0% 100%;
-  --secondary: 270 100% 72%;
-  --secondary-foreground: 0 0% 100%;
-  --muted: 280 30% 90%;
-  --muted-foreground: 280 20% 50%;
+  --primary-border: rgba(255, 107, 157, 0.3);
+  --secondary: 270 60% 85%;
+  --secondary-foreground: 270 20% 20%;
+  --secondary-border: rgba(176, 110, 255, 0.2);
+  --muted: 300 20% 90%;
+  --muted-foreground: 270 15% 55%;
+  --muted-border: rgba(200, 180, 220, 0.3);
   --accent: 270 100% 72%;
   --accent-foreground: 0 0% 100%;
-  --destructive: 0 84% 60%;
+  --accent-border: rgba(176, 110, 255, 0.3);
+  --destructive: 0 72% 51%;
   --destructive-foreground: 0 0% 100%;
-  --sidebar: 0 0% 100%;
-  --sidebar-foreground: 280 40% 20%;
-  --sidebar-border: 280 30% 80%;
-  --sidebar-primary: 330 100% 71%;
-  --sidebar-primary-foreground: 0 0% 100%;
-  --sidebar-accent: 270 100% 72%;
-  --sidebar-accent-foreground: 0 0% 100%;
-  --sidebar-ring: 330 100% 71%;
+  --destructive-border: rgba(239, 68, 68, 0.3);
+  --border: 270 30% 88%;
+  --input: 270 30% 88%;
+  --ring: 330 100% 71%;
   --chart-1: 330 100% 71%;
   --chart-2: 270 100% 72%;
   --chart-3: 200 80% 65%;
   --chart-4: 50 100% 65%;
   --chart-5: 150 60% 55%;
+  --sidebar: 300 40% 96%;
+  --sidebar-foreground: 270 20% 20%;
+  --sidebar-border: 270 30% 88%;
+  --sidebar-primary: 330 100% 71%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 270 100% 72%;
+  --sidebar-accent-foreground: 0 0% 100%;
+  --sidebar-ring: 330 100% 71%;
 }
 
 @layer base {
@@ -321,4 +257,41 @@
     70%     { transform: translateY(-4px) scale(0.95); }
   }
   .check-bounce { animation: check-bounce 0.8s ease-in-out 0.3s infinite; }
+
+  /* ── Holographic score card ─────────────────────────────────────────────── */
+  .holo-card {
+    background: linear-gradient(
+      135deg,
+      rgba(176,110,255,0.85) 0%,
+      rgba(255,107,157,0.80) 35%,
+      rgba(100,180,255,0.80) 65%,
+      rgba(255,215,120,0.75) 100%
+    );
+    border: 1.5px solid rgba(255,255,255,0.55);
+    box-shadow:
+      0 8px 32px rgba(176,110,255,0.35),
+      0 2px 8px rgba(255,107,157,0.25),
+      inset 0 1px 0 rgba(255,255,255,0.4);
+  }
+
+  @keyframes holo-shift {
+    0%   { background-position: 0%   50%; opacity: 0.55; }
+    50%  { background-position: 100% 50%; opacity: 0.75; }
+    100% { background-position: 0%   50%; opacity: 0.55; }
+  }
+  .holo-overlay {
+    background: linear-gradient(
+      105deg,
+      transparent 20%,
+      rgba(255,255,255,0.18) 30%,
+      rgba(200,160,255,0.12) 40%,
+      rgba(255,180,220,0.12) 50%,
+      rgba(160,220,255,0.12) 60%,
+      rgba(255,255,255,0.18) 70%,
+      transparent 80%
+    );
+    background-size: 300% 300%;
+    animation: holo-shift 4s ease-in-out infinite;
+    mix-blend-mode: screen;
+  }
 }
