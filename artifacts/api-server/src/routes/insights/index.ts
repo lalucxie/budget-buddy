@@ -55,7 +55,7 @@ function parseInsights(raw: string): InsightCard[] {
   return cards.slice(0, 3);
 }
 
-router.post("/api/insights/generate", async (req, res) => {
+router.post("/insights/generate", async (req, res) => {
   const { user_id } = req.body as { user_id?: string };
 
   if (!user_id) {
