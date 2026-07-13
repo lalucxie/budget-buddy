@@ -14,11 +14,11 @@ const CATEGORIES = [
 ];
 
 const MOODS = [
-  { emoji: "😊", label: "Happy",   color: "#34D399" },
-  { emoji: "😔", label: "Sad",     color: "#60A5FA" },
-  { emoji: "😴", label: "Bored",   color: "#A78BFA" },
-  { emoji: "😡", label: "Stressed",color: "#F87171" },
-  { emoji: "🤩", label: "Excited", color: "#FBBF24" },
+  { emoji: "😊", label: "Happy",    color: "#34D399" },
+  { emoji: "😔", label: "Sad",      color: "#60A5FA" },
+  { emoji: "😴", label: "Bored",    color: "#A78BFA" },
+  { emoji: "😡", label: "Stressed", color: "#F87171" },
+  { emoji: "🤩", label: "Excited",  color: "#FBBF24" },
 ];
 
 const CONFETTI_COLORS = ["#FF6B9D", "#B06EFF", "#FFD700", "#34D399", "#60A5FA", "#FBBF24", "#FF9BE2"];
@@ -122,7 +122,7 @@ export default function AddExpense() {
   return (
     <div className="p-5 pt-10 animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-6 relative overflow-hidden pb-28">
 
-      {/* Confetti canvas */}
+      {/* Confetti */}
       {particles.length > 0 && (
         <div className="pointer-events-none fixed inset-0 z-50" style={{ overflow: "hidden" }}>
           {particles.map(p => (
@@ -132,7 +132,7 @@ export default function AddExpense() {
                 position: "absolute",
                 left: `${p.x}%`,
                 top: `${p.y}%`,
-                width: p.shape === "rect" ? p.size : p.size,
+                width: p.size,
                 height: p.shape === "rect" ? p.size * 0.5 : p.size,
                 borderRadius: p.shape === "circle" ? "50%" : "2px",
                 background: p.color,
@@ -149,25 +149,25 @@ export default function AddExpense() {
         <div className="fixed inset-0 z-40 flex items-center justify-center pointer-events-none">
           <div className="success-pop glass-card px-10 py-8 flex flex-col items-center gap-3 text-center shadow-2xl">
             <div className="check-bounce text-6xl">✅</div>
-            <p className="text-lg font-extrabold font-serif gradient-text">expense logged!</p>
-            <p className="text-sm text-muted-foreground">your wallet is watching 👀</p>
+            <p className="text-lg font-extrabold font-serif gradient-text">logged!</p>
+            <p className="font-accent text-xl text-muted-foreground">small steps, big wins 💪</p>
           </div>
         </div>
       )}
 
       {/* Header */}
       <div className="text-center space-y-1">
-        <h1 className="text-2xl font-extrabold font-serif gradient-text">Add Expense 💸</h1>
-        <p className="text-muted-foreground text-sm">where did the bag go? ☕</p>
+        <h1 className="text-2xl font-extrabold font-serif gradient-text">what did you just spend on? 🤭</h1>
+        <p className="font-accent text-xl text-muted-foreground">no judgment, just data</p>
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-600 text-xs rounded-2xl px-4 py-3">{error}</div>
+        <div className="bg-red-50 border border-red-200 text-red-600 text-xs rounded-2xl px-4 py-3 font-medium">{error}</div>
       )}
 
-      {/* ── Amount ─────────────────────────────── */}
+      {/* Amount */}
       <div className={`glass-card p-6 flex flex-col items-center transition-all duration-300 ${amount ? "amount-glow" : ""}`}>
-        <p className="text-xs font-semibold text-foreground/50 uppercase tracking-widest mb-3">amount</p>
+        <p className="text-xs font-semibold text-foreground/50 uppercase tracking-widest mb-3">the damage</p>
         <div className="flex items-center gap-2">
           <span className="text-3xl font-bold text-muted-foreground/60 select-none">₹</span>
           <input
@@ -191,12 +191,12 @@ export default function AddExpense() {
             }}
           />
         </div>
-        <p className="text-[11px] text-muted-foreground/50 mt-2">tap and type ✨</p>
+        <p className="font-accent text-base text-muted-foreground/60 mt-2">tap and type ✨</p>
       </div>
 
-      {/* ── Category ───────────────────────────── */}
+      {/* Category */}
       <div className="space-y-3">
-        <p className="text-xs font-semibold text-foreground/60 uppercase tracking-widest px-1">category</p>
+        <p className="text-xs font-semibold text-foreground/60 uppercase tracking-widest px-1">where'd it go?</p>
         <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar snap-x snap-mandatory">
           {CATEGORIES.map(cat => {
             const active = category === cat.label;
@@ -219,36 +219,38 @@ export default function AddExpense() {
         </div>
       </div>
 
-      {/* ── Note ───────────────────────────────── */}
+      {/* Note */}
       <div className="space-y-2">
-        <p className="text-xs font-semibold text-foreground/60 uppercase tracking-widest px-1">note <span className="normal-case font-normal text-muted-foreground/50">(optional)</span></p>
+        <p className="text-xs font-semibold text-foreground/60 uppercase tracking-widest px-1">
+          spill the details <span className="normal-case font-normal text-muted-foreground/50">(optional)</span>
+        </p>
         <input
           data-testid="input-note"
           type="text"
           value={note}
           onChange={e => setNote(e.target.value)}
           placeholder="what was it for? 👀"
-          className="w-full bg-white/50 border-2 border-white/70 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 text-foreground placeholder:text-muted-foreground transition-all"
+          className="w-full bg-white/60 border-2 border-white/70 rounded-2xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/40 text-foreground placeholder:text-muted-foreground/60 transition-all"
         />
       </div>
 
-      {/* ── Date ───────────────────────────────── */}
+      {/* Date */}
       <div className="space-y-2">
-        <p className="text-xs font-semibold text-foreground/60 uppercase tracking-widest px-1">date</p>
+        <p className="text-xs font-semibold text-foreground/60 uppercase tracking-widest px-1">when?</p>
         <input
           data-testid="input-date"
           type="date"
           value={date}
           onChange={e => setDate(e.target.value)}
           max={new Date().toISOString().split("T")[0]}
-          className="w-full bg-white/50 border-2 border-white/70 rounded-2xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/40 text-foreground transition-all"
+          className="w-full bg-white/60 border-2 border-white/70 rounded-2xl px-4 py-3 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-primary/40 text-foreground transition-all"
         />
       </div>
 
-      {/* ── Mood ───────────────────────────────── */}
+      {/* Mood */}
       <div className="space-y-3">
         <p className="text-xs font-semibold text-foreground/60 uppercase tracking-widest px-1">
-          how were you feeling? 🌈
+          mood check 🌈
         </p>
         <div className="flex justify-between gap-2">
           {MOODS.map(m => {
@@ -276,14 +278,14 @@ export default function AddExpense() {
         </div>
       </div>
 
-      {/* ── Submit ─────────────────────────────── */}
+      {/* Submit */}
       <button
         data-testid="button-save-expense"
         onClick={handleSave}
         disabled={!canSave || saving || success}
         className="w-full gradient-btn py-4 text-lg font-bold disabled:opacity-40 disabled:cursor-not-allowed"
       >
-        {saving ? "saving... ✨" : success ? "saved! 🎉" : "Add Expense ✨"}
+        {saving ? "logging... ✨" : success ? "logged! 🎉" : "log it ✨"}
       </button>
     </div>
   );

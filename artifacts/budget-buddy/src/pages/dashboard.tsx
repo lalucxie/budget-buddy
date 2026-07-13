@@ -312,8 +312,8 @@ export default function Dashboard() {
       {/* ── Header ──────────────────────────────────────────────────────── */}
       <div className="flex justify-between items-start">
         <div>
-          <h1 className="text-2xl font-extrabold font-serif text-foreground">hey {firstName} ✨</h1>
-          <p className="text-muted-foreground text-sm font-medium">your financial dashboard</p>
+          <h1 className="text-2xl font-extrabold font-serif text-foreground">hey {firstName}! 💫</h1>
+          <p className="font-accent text-lg text-muted-foreground">your wallet missed you 💸</p>
         </div>
         <Link to="/pet"
           className="w-11 h-11 rounded-full bg-white/60 border-2 border-white flex items-center justify-center text-2xl shadow-sm hover:scale-110 transition-transform">
@@ -398,7 +398,7 @@ export default function Dashboard() {
             ))}
           </div>
         ) : trendData.every(d => d.amount === 0) ? (
-          <p className="text-center py-8 text-sm text-muted-foreground">no data for this period 📭</p>
+          <p className="text-center py-8 font-accent text-lg text-muted-foreground">nothing here yet — but every glow up starts somewhere ✨</p>
         ) : (
           <div className="overflow-x-auto no-scrollbar -mx-1">
             <div style={{ minWidth: Math.max(300, trendData.length * (filter === "monthly" ? 14 : 36)) }}>

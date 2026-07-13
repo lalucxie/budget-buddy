@@ -1,0 +1,153 @@
+Make these improvements across the entire app:
+
+─── AUTH - ADD USERNAME ───
+On the signup page add a USERNAME field:
+- Between email and password
+- Placeholder: "what should we call you? ✨"
+- Save username to Supabase profiles table
+- Use this name everywhere in the app
+  instead of generic "hey there"
+- Example: "hey Lakshanika! 💫" on dashboard
+
+─── TYPOGRAPHY OVERHAUL ───
+Change fonts across entire app:
+
+Import from Google Fonts:
+- Headings: "Playfair Display" 
+  (elegant, editorial, personality)
+- Body/UI text: "DM Sans" 
+  (clean, modern, readable)
+- Accent/fun text: "Caveat" 
+  (handwritten feel for captions and tips)
+
+Apply font sizes properly:
+- Page titles: 28-32px Playfair Display bold
+- Section headings: 20-22px Playfair Display
+- Body text: 15-16px DM Sans, line-height 1.6
+- Captions/tips: 14px Caveat
+- Numbers/stats: 32-40px DM Sans bold
+
+─── WRITING STYLE - REWRITE ALL COPY ───
+Rewrite every single text in the app.
+Rules:
+- Friendly and casual like a smart best friend
+- Never use the word "slash" anywhere
+- No AI-sounding phrases like 
+  "leverage", "utilize", "optimize"
+- Short punchy sentences
+- Use "you" not "the user"
+- Mix in wit and warmth
+
+Examples of good copy:
+  BAD: "Track your financial expenditure"
+  GOOD: "see where your money actually goes 👀"
+
+  BAD: "Add a new expense entry"  
+  GOOD: "what did you just spend on? 🤭"
+
+  BAD: "Your budget has been exceeded"
+  GOOD: "oops, looks like we went a little over 😅"
+
+  BAD: "Welcome back to Budget Buddy"
+  GOOD: "you're back! your wallet missed you 💸"
+
+Rewrite these specific screens:
+- Landing page hero: something catchy about 
+  money that makes you smile
+- Login page: warm and welcoming
+- Setup wizard: excited and encouraging
+- Dashboard greeting: personal with username
+- Add expense: playful and quick
+- Goals page: motivating without being preachy
+- Pet page: emotional and fun
+- Insights page: smart but never boring
+
+─── CATCHY LINES TO USE ───
+Use these lines in appropriate places:
+
+Landing: "your money has trust issues. fix that."
+Login: "welcome back, let's check on your coins 🪙"
+Empty dashboard: "nothing here yet — 
+  but every glow up starts somewhere ✨"
+First expense added: "logged! small steps, big wins 💪"
+Under budget: "you're winning at adulting rn 🏆"
+Over budget: "it happens to the best of us. 
+  reset and go again 🌸"
+Savings goal: "imagine already having it. 
+  now let's make it real 💎"
+Setup step 1: "first things first — 
+  how much are we working with this month?"
+Setup step 2: "what are you saving up for? 
+  dream big, we'll do the math 🧮"
+Setup step 3: "last thing! pick a little buddy 
+  to keep you accountable 🐾"
+
+─── ICONS - ELEGANT OVERHAUL ───
+Replace all current icons with Lucide React icons.
+Use these specific elegant ones:
+
+Navigation:
+- Home → Lucide "House" (not Home)
+- Add expense → Lucide "CirclePlus"
+- Goals → Lucide "Target"
+- Pet → Lucide "Heart"
+- Insights → Lucide "Sparkles"
+- Profile → Lucide "UserCircle"
+
+Dashboard:
+- Budget remaining → Lucide "Wallet"
+- Streak → Lucide "Flame"  
+- Savings → Lucide "PiggyBank"
+- Transactions → Lucide "ArrowDownUp"
+
+Style all icons:
+- Size: 22px navigation, 20px inline
+- Stroke width: 1.5 (makes them look elegant)
+- Color: matches the section accent color
+- Never use filled/solid icons — 
+  outline only looks more premium
+
+─── COLOUR AND READABILITY FIX ───
+Fix text contrast across entire app:
+
+Text on gradient backgrounds:
+- Always use white #FFFFFF
+- Font weight minimum 500
+- Add subtle text-shadow: 
+  0 1px 3px rgba(0,0,0,0.2)
+
+Text on white/light cards:
+- Headings: #1A1A2E (deep navy, not black)
+- Body: #4A4A6A (soft purple-grey)
+- Captions: #8A8AAA (muted but readable)
+- Never use grey on pink — unreadable!
+
+Emoji style fix:
+- Use emojis at the end of sentences, not middle
+- One emoji per line maximum
+- Avoid: 🔥💸✨ together — too busy
+- Prefer: single statement emoji that adds meaning
+
+─── COLOUR COMBO FIX ───
+Fix these specific bad combos:
+
+REMOVE these combinations:
+- Pink text on pink background
+- Purple text on lavender background  
+- White text on light pink (low contrast)
+- Grey text on any gradient
+
+REPLACE with:
+- White text on all gradient backgrounds
+- Deep navy #1A1A2E on white cards
+- Hot pink #FF6B9D only for accents/highlights
+- Purple #B06EFF for secondary elements
+
+Card backgrounds should be:
+- White with 80% opacity
+- Backdrop blur: 12px
+- Border: 1px solid rgba(255,255,255,0.6)
+- Shadow: 0 8px 32px rgba(139,92,246,0.1)
+
+Keep the overall pink/purple Y2K vibe but 
+make everything crisp, readable and premium.

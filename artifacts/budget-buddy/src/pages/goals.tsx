@@ -59,7 +59,7 @@ function CircularProgress({ pct, size = 160, emoji, name }: {
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-0.5">
           <span className="text-3xl">{emoji}</span>
           <span className="text-xl font-extrabold gradient-text leading-none">{Math.round(pct)}%</span>
-          <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">saved</span>
+          <span className="font-accent text-base text-muted-foreground uppercase tracking-wide">saved</span>
         </div>
       </div>
       <p className="font-bold text-foreground text-sm text-center">{name}</p>
@@ -80,7 +80,7 @@ function ScoreBar({ icon, label, score, delay = 0 }: {
   return (
     <div className="space-y-1.5">
       <div className="flex justify-between items-center">
-        <span className="text-xs font-semibold text-foreground/80 flex items-center gap-1.5">
+        <span className="text-xs font-semibold text-white/90 flex items-center gap-1.5">
           <span>{icon}</span>{label}
         </span>
         <span className="text-sm font-extrabold" style={{ color: c }}>{score}</span>
@@ -134,14 +134,14 @@ function AddMoneyModal({ goal, onClose, onSaved }: {
         <div className="flex justify-between items-start">
           <div>
             <h3 className="font-extrabold text-foreground text-base">
-              add to {goal.emoji} {goal.name}
+              adding to {goal.emoji} {goal.name}
             </h3>
-            <p className="text-xs text-muted-foreground">{INR(left)} more to reach your goal</p>
+            <p className="font-accent text-base text-muted-foreground">{INR(left)} more to hit the goal</p>
           </div>
           <button onClick={onClose} className="text-muted-foreground hover:text-foreground text-xl leading-none ml-3">✕</button>
         </div>
 
-        <div className="flex items-center gap-2 bg-white/50 border-2 border-white/70 rounded-2xl px-4 py-3 focus-within:ring-2 focus-within:ring-primary/40 transition-all">
+        <div className="flex items-center gap-2 bg-white/60 border-2 border-white/70 rounded-2xl px-4 py-3 focus-within:ring-2 focus-within:ring-primary/40 transition-all">
           <span className="text-xl font-bold text-muted-foreground">₹</span>
           <input
             data-testid="input-add-money"
@@ -156,7 +156,6 @@ function AddMoneyModal({ goal, onClose, onSaved }: {
           />
         </div>
 
-        {/* Quick presets */}
         <div className="flex gap-2">
           {[500, 1000, 2000].map(preset => (
             <button
@@ -174,7 +173,7 @@ function AddMoneyModal({ goal, onClose, onSaved }: {
           disabled={!amt || parseFloat(amt) <= 0 || saving}
           className="w-full gradient-btn py-3.5 text-base font-bold disabled:opacity-40"
         >
-          {saving ? "saving... ✨" : "Add Savings 💎"}
+          {saving ? "saving... ✨" : "add to savings 💎"}
         </button>
       </div>
     </div>
@@ -211,24 +210,24 @@ function NewGoalForm({ userId, onSaved, onClose }: {
       </div>
 
       <div className="space-y-1.5">
-        <label className="text-[10px] font-bold text-foreground/60 uppercase tracking-widest">Name</label>
+        <label className="text-[10px] font-bold text-foreground/60 uppercase tracking-widest">what are you saving for?</label>
         <input type="text" value={name} onChange={e => setName(e.target.value)}
           placeholder="e.g. New Laptop 💻"
-          className="w-full bg-white/50 border border-white/80 rounded-2xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 text-foreground placeholder:text-muted-foreground" />
+          className="w-full bg-white/60 border border-white/80 rounded-2xl px-4 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/40 text-foreground placeholder:text-muted-foreground/60" />
       </div>
 
       <div className="space-y-1.5">
-        <label className="text-[10px] font-bold text-foreground/60 uppercase tracking-widest">Target Amount</label>
+        <label className="text-[10px] font-bold text-foreground/60 uppercase tracking-widest">how much does it cost?</label>
         <div className="relative">
           <span className="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-muted-foreground">₹</span>
           <input type="number" value={target} onChange={e => setTarget(e.target.value)}
             placeholder="0" min="0"
-            className="w-full bg-white/50 border border-white/80 rounded-2xl pl-8 pr-4 py-2.5 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-primary/40 text-foreground" />
+            className="w-full bg-white/60 border border-white/80 rounded-2xl pl-8 pr-4 py-2.5 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-primary/40 text-foreground" />
         </div>
       </div>
 
       <div className="space-y-1.5">
-        <label className="text-[10px] font-bold text-foreground/60 uppercase tracking-widest">Emoji</label>
+        <label className="text-[10px] font-bold text-foreground/60 uppercase tracking-widest">pick a vibe</label>
         <div className="flex flex-wrap gap-2">
           {GOAL_EMOJIS.map(e => (
             <button key={e} onClick={() => setEmoji(e)}
@@ -246,11 +245,11 @@ function NewGoalForm({ userId, onSaved, onClose }: {
       <div className="flex gap-2">
         <button onClick={onClose}
           className="flex-1 py-2.5 rounded-full border-2 border-white/60 bg-white/40 text-sm font-semibold text-muted-foreground">
-          Cancel
+          cancel
         </button>
         <button onClick={handleSave} disabled={!name || !target || saving}
           className="flex-[2] gradient-btn py-2.5 text-sm disabled:opacity-40">
-          {saving ? "saving..." : "Create Goal ✨"}
+          {saving ? "saving..." : "create goal ✨"}
         </button>
       </div>
     </div>
@@ -260,18 +259,18 @@ function NewGoalForm({ userId, onSaved, onClose }: {
 // ─── Main page ────────────────────────────────────────────────────────────────
 export default function Goals() {
   const { user, profile } = useAuth();
-  const [goals, setGoals]       = useState<SavingsGoal[]>([]);
-  const [expenses, setExpenses] = useState<Expense[]>([]);
-  const [loading, setLoading]   = useState(true);
+  const [goals, setGoals]           = useState<SavingsGoal[]>([]);
+  const [expenses, setExpenses]     = useState<Expense[]>([]);
+  const [loading, setLoading]       = useState(true);
   const [addMoneyTo, setAddMoneyTo] = useState<SavingsGoal | null>(null);
   const [showNewForm, setShowNewForm] = useState(false);
-  const [copied, setCopied] = useState(false);
+  const [copied, setCopied]         = useState(false);
 
   const income = profile?.monthly_income ?? 0;
 
   function load() {
     if (!user) return;
-    const now = new Date();
+    const now   = new Date();
     const start = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
     Promise.all([
       supabase.from("savings_goals").select("*").eq("user_id", user.id)
@@ -290,24 +289,22 @@ export default function Goals() {
 
   // ── Score calculation ──────────────────────────────────────────────────────
   const scores = useMemo(() => {
-    const now = new Date();
+    const now         = new Date();
     const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
     const dayOfMonth  = now.getDate();
     const dailyBudget = income / daysInMonth;
 
-    // Budget control: % of days at or under daily budget
     const byDay: Record<string, number> = {};
     expenses.forEach(e => {
       const key = e.date ?? e.created_at.split("T")[0];
       byDay[key] = (byDay[key] ?? 0) + e.amount;
     });
-    const daysTracked = Object.keys(byDay).length;
-    const daysUnder   = Object.values(byDay).filter(d => d <= dailyBudget).length;
+    const daysTracked   = Object.keys(byDay).length;
+    const daysUnder     = Object.values(byDay).filter(d => d <= dailyBudget).length;
     const budgetControl = daysTracked > 0
       ? Math.round((daysUnder / Math.min(daysTracked, dayOfMonth)) * 100)
       : income > 0 ? 80 : 50;
 
-    // Savings habit: avg % of goals filled
     const savingsHabit = goals.length > 0
       ? Math.round(
           goals.reduce((s, g) =>
@@ -316,9 +313,8 @@ export default function Goals() {
         )
       : 40;
 
-    // Impulse control: 100 – % of mooded purchases tagged Bored/Stressed
-    const mooded   = expenses.filter(e => e.mood);
-    const impulsive = mooded.filter(e => e.mood === "Bored" || e.mood === "Stressed").length;
+    const mooded        = expenses.filter(e => e.mood);
+    const impulsive     = mooded.filter(e => e.mood === "Bored" || e.mood === "Stressed").length;
     const impulseControl = mooded.length > 0
       ? Math.round((1 - impulsive / mooded.length) * 100)
       : 75;
@@ -330,7 +326,7 @@ export default function Goals() {
   function handleShare() {
     const title = scoreTitle(scores.overall);
     navigator.clipboard.writeText(
-      `My Budget Buddy College Survival Score: ${scores.overall}/100 — ${title} 🎓\n` +
+      `My Budget Buddy Adulting Score: ${scores.overall}/100 — ${title} 🎓\n` +
       `Budget Control: ${scores.budgetControl} | Savings: ${scores.savingsHabit} | Impulse Control: ${scores.impulseControl}\n` +
       `#BudgetBuddy #StudentLife`
     ).then(() => {
@@ -346,15 +342,15 @@ export default function Goals() {
       <div className="space-y-4">
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-2xl font-extrabold font-serif gradient-text">Savings Goals ⭐</h1>
-            <p className="text-xs text-muted-foreground">turn dreams into plans 🔮</p>
+            <h1 className="text-2xl font-extrabold font-serif gradient-text">your goals 💎</h1>
+            <p className="font-accent text-base text-muted-foreground">imagine already having it. now let's make it real.</p>
           </div>
           <button
             data-testid="button-new-goal"
             onClick={() => setShowNewForm(v => !v)}
             className="gradient-btn px-4 py-2 text-sm"
           >
-            {showNewForm ? "✕ close" : "+ New"}
+            {showNewForm ? "✕ close" : "+ new"}
           </button>
         </div>
 
@@ -375,11 +371,11 @@ export default function Goals() {
         ) : goals.length === 0 ? (
           <div className="glass-card p-10 flex flex-col items-center text-center gap-3">
             <span className="text-5xl float inline-block">🌱</span>
-            <p className="font-bold text-foreground">no goals yet!</p>
-            <p className="text-sm text-muted-foreground">plant your first savings seed ✨</p>
+            <p className="font-bold text-foreground">nothing here yet</p>
+            <p className="font-accent text-lg text-muted-foreground">every glow up starts somewhere ✨</p>
             <button onClick={() => setShowNewForm(true)}
               className="gradient-btn px-6 py-3 text-sm mt-1">
-              + Add First Goal
+              + add first goal
             </button>
           </div>
         ) : (
@@ -396,11 +392,11 @@ export default function Goals() {
                   <div className="text-center space-y-1 w-full">
                     {done ? (
                       <p className="font-extrabold text-emerald-500 text-sm">
-                        🎉 Goal reached! you absolutely slayed!
+                        you absolutely slayed this one! 🎉
                       </p>
                     ) : (
                       <p className="text-sm font-semibold text-muted-foreground">
-                        <span className="gradient-text font-extrabold">{INR(left)} more</span> to go! you got this 💪
+                        <span className="gradient-text font-extrabold">{INR(left)} more</span> to go — you got this 💪
                       </p>
                     )}
                     <div className="flex justify-center gap-4 text-xs text-muted-foreground font-medium">
@@ -420,7 +416,7 @@ export default function Goals() {
                       onClick={() => setAddMoneyTo(goal)}
                       className="w-full gradient-btn py-3 text-sm font-bold"
                     >
-                      + Add Money 💎
+                      + add savings 💎
                     </button>
                   )}
                 </div>
@@ -430,18 +426,16 @@ export default function Goals() {
         )}
       </div>
 
-      {/* ── SECTION 2: College Survival Score ─────────────────────── */}
+      {/* ── SECTION 2: Adulting Score ──────────────────────────────── */}
       <div className="space-y-4">
         <div>
-          <h2 className="text-2xl font-extrabold font-serif gradient-text">Survival Score 🎓</h2>
-          <p className="text-xs text-muted-foreground">how well are you adulting this month?</p>
+          <h2 className="text-2xl font-extrabold font-serif gradient-text">adulting score 🎓</h2>
+          <p className="font-accent text-base text-muted-foreground">how well are you holding it together this month?</p>
         </div>
 
-        {/* Holographic score card */}
         <div className="holo-card relative overflow-hidden rounded-3xl p-6 space-y-5">
           <div className="holo-overlay absolute inset-0 rounded-3xl pointer-events-none" />
 
-          {/* Big score */}
           <div className="relative z-10 flex flex-col items-center gap-2 py-2">
             {loading ? (
               <div className="space-y-2 flex flex-col items-center w-full">
@@ -460,7 +454,7 @@ export default function Goals() {
                   >
                     {scores.overall}
                   </span>
-                  <span className="text-2xl font-bold text-white/60 mb-2">/ 100</span>
+                  <span className="text-2xl font-bold text-white/70 mb-2">/ 100</span>
                 </div>
                 <div className="chrome-badge px-4 py-1.5 text-sm font-bold tracking-wide">
                   {scoreTitle(scores.overall)}
@@ -469,7 +463,6 @@ export default function Goals() {
             )}
           </div>
 
-          {/* Score bars */}
           <div className="relative z-10 space-y-3 bg-white/20 backdrop-blur-sm rounded-2xl p-4 border border-white/30">
             {loading ? (
               <div className="space-y-3">
@@ -489,56 +482,51 @@ export default function Goals() {
             )}
           </div>
 
-          {/* Score legend */}
           {!loading && (
             <div className="relative z-10 space-y-0.5 px-1">
-              <p className="text-[11px] text-white/70">💰 days you stayed within your daily budget</p>
-              <p className="text-[11px] text-white/70">💎 average progress across your savings goals</p>
-              <p className="text-[11px] text-white/70">⚡ purchases made when <em>not</em> bored or stressed</p>
+              <p className="text-[11px] text-white/80 font-accent text-sm">💰 days you stayed within your daily budget</p>
+              <p className="text-[11px] text-white/80 font-accent text-sm">💎 average progress across your savings goals</p>
+              <p className="text-[11px] text-white/80 font-accent text-sm">⚡ purchases made when you weren't bored or stressed</p>
             </div>
           )}
 
-          {/* Share */}
           <button
             data-testid="button-share-score"
             onClick={handleShare}
             disabled={loading}
             className="relative z-10 w-full py-3 rounded-full border-2 border-white/50 bg-white/20 backdrop-blur-sm text-white font-bold text-sm hover:bg-white/30 transition-all disabled:opacity-40 active:scale-95"
           >
-            {copied ? "copied to clipboard! 🎉" : "Share Score 📤"}
+            {copied ? "copied! share it 🎉" : "share your score 📤"}
           </button>
         </div>
 
-        {/* Level-up tips */}
         {!loading && (
-          <div className="glass-card p-4 space-y-1.5">
-            <p className="text-xs font-bold text-foreground">how to level up 💡</p>
+          <div className="glass-card p-4 space-y-2">
+            <p className="text-xs font-bold text-foreground">level up tips 💡</p>
             {scores.budgetControl < 70 && (
-              <p className="text-xs text-muted-foreground">
-                · spend under {INR(income / new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())} per day to boost Budget Control
+              <p className="font-accent text-base text-muted-foreground">
+                · spend under {INR(income / new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())} per day to boost your Budget Control
               </p>
             )}
             {scores.savingsHabit < 70 && (
-              <p className="text-xs text-muted-foreground">
-                · add money to your goals regularly to build your Savings Habit score
+              <p className="font-accent text-base text-muted-foreground">
+                · add money to your goals regularly to build that Savings Habit
               </p>
             )}
             {scores.impulseControl < 70 && (
-              <p className="text-xs text-muted-foreground">
-                · log your moods when adding expenses — avoid spending when bored or stressed!
+              <p className="font-accent text-base text-muted-foreground">
+                · next time you're bored or stressed, wait 10 minutes before spending
               </p>
             )}
-            {scores.overall >= 90 && (
-              <p className="text-xs text-muted-foreground">· you're literally a finance legend 🏆 keep it up!</p>
-            )}
-            {scores.budgetControl >= 70 && scores.savingsHabit >= 70 && scores.impulseControl >= 70 && scores.overall < 90 && (
-              <p className="text-xs text-muted-foreground">· great job across the board — keep the consistency going ✨</p>
+            {scores.budgetControl >= 70 && scores.savingsHabit >= 70 && scores.impulseControl >= 70 && (
+              <p className="font-accent text-base text-muted-foreground">
+                · honestly? you're winning at adulting rn 🏆 keep it up!
+              </p>
             )}
           </div>
         )}
       </div>
 
-      {/* Add money modal */}
       {addMoneyTo && (
         <AddMoneyModal
           goal={addMoneyTo}

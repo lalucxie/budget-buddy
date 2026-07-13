@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=Caveat:wght@400;600;700&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 @plugin "@tailwindcss/typography";
@@ -57,16 +57,17 @@
   --color-sidebar-accent-border: var(--sidebar-accent-border);
   --color-sidebar-ring: hsl(var(--sidebar-ring));
 
-  --font-sans: var(--app-font-sans);
-  --font-serif: var(--app-font-serif);
-  --font-mono: var(--app-font-mono);
+  --font-sans:   var(--app-font-sans);
+  --font-serif:  var(--app-font-serif);
+  --font-mono:   var(--app-font-mono);
+  --font-accent: var(--app-font-accent);
 
   --text-xs: 0.75rem;
   --text-xs--line-height: calc(1 / 0.75);
   --text-sm: 0.875rem;
   --text-sm--line-height: calc(1.25 / 0.875);
   --text-base: 1rem;
-  --text-base--line-height: calc(1.5 / 1);
+  --text-base--line-height: 1.6;
   --text-lg: 1.125rem;
   --text-lg--line-height: calc(1.75 / 1.125);
   --text-xl: 1.25rem;
@@ -92,32 +93,34 @@
 
 :root {
   --radius: 0.625rem;
-  --app-font-sans: 'Plus Jakarta Sans', sans-serif;
-  --app-font-serif: 'Plus Jakarta Sans', sans-serif;
-  --app-font-mono: 'Courier New', monospace;
+  --app-font-sans:   'DM Sans', system-ui, sans-serif;
+  --app-font-serif:  'Playfair Display', Georgia, serif;
+  --app-font-mono:   'Courier New', monospace;
+  --app-font-accent: 'Caveat', cursive;
 
   --gradient-primary: linear-gradient(135deg, #FF6B9D 0%, #B06EFF 100%);
   --gradient-bg: linear-gradient(135deg, #E8D5F5 0%, #FFD6E7 100%);
-  --glass-bg: rgba(255, 255, 255, 0.45);
-  --glass-border: 1.5px solid rgba(255, 255, 255, 0.7);
+  --glass-bg: rgba(255, 255, 255, 0.72);
+  --glass-border: 1px solid rgba(255, 255, 255, 0.65);
   --glow-pink: 0 0 20px rgba(255, 107, 157, 0.3), 0 4px 15px rgba(176, 110, 255, 0.2);
 
+  /* Deep navy text — high contrast on white/light cards */
   --background: 300 40% 96%;
-  --foreground: 270 20% 20%;
+  --foreground: 240 29% 14%;
   --card: 0 0% 100%;
-  --card-foreground: 270 20% 20%;
+  --card-foreground: 240 29% 14%;
   --card-border: 0 0% 100%;
   --popover: 0 0% 100%;
-  --popover-foreground: 270 20% 20%;
+  --popover-foreground: 240 29% 14%;
   --popover-border: 0 0% 100%;
   --primary: 330 100% 71%;
   --primary-foreground: 0 0% 100%;
   --primary-border: rgba(255, 107, 157, 0.3);
   --secondary: 270 60% 85%;
-  --secondary-foreground: 270 20% 20%;
+  --secondary-foreground: 240 29% 14%;
   --secondary-border: rgba(176, 110, 255, 0.2);
   --muted: 300 20% 90%;
-  --muted-foreground: 270 15% 55%;
+  --muted-foreground: 240 18% 42%;
   --muted-border: rgba(200, 180, 220, 0.3);
   --accent: 270 100% 72%;
   --accent-foreground: 0 0% 100%;
@@ -134,7 +137,7 @@
   --chart-4: 50 100% 65%;
   --chart-5: 150 60% 55%;
   --sidebar: 300 40% 96%;
-  --sidebar-foreground: 270 20% 20%;
+  --sidebar-foreground: 240 29% 14%;
   --sidebar-border: 270 30% 88%;
   --sidebar-primary: 330 100% 71%;
   --sidebar-primary-foreground: 0 0% 100%;
@@ -153,6 +156,7 @@
     background: var(--gradient-bg);
     min-height: 100vh;
     background-attachment: fixed;
+    line-height: 1.6;
   }
 }
 
@@ -163,6 +167,7 @@
     -webkit-backdrop-filter: blur(12px);
     border: var(--glass-border);
     border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(139, 92, 246, 0.08);
   }
 
   .gradient-text {
@@ -194,6 +199,8 @@
     font-weight: 700;
     letter-spacing: 0.05em;
     text-transform: uppercase;
+    /* text always deep navy on chrome-badge */
+    color: hsl(240, 29%, 14%);
   }
 
   .shimmer {
@@ -293,5 +300,17 @@
     background-size: 300% 300%;
     animation: holo-shift 4s ease-in-out infinite;
     mix-blend-mode: screen;
+  }
+
+  /* Accent / handwritten text */
+  .font-accent {
+    font-family: var(--app-font-accent);
+  }
+
+  /* White text on gradients — always legible */
+  .on-gradient {
+    color: #ffffff;
+    font-weight: 500;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.2);
   }
 }
