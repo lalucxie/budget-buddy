@@ -1,0 +1,94 @@
+Redesign the AI Insights page and Pet page 
+completely. Here's what I want:
+
+─── AI INSIGHTS PAGE ───
+Make it very visual and personality-driven:
+
+1. SPENDING PERSONALITY CARD (top of page)
+   - Big hero card with holographic gradient
+   - Show personality type with large emoji
+   - Types: "The Foodie 🍔" / "The Saver 🌱" / 
+     "The Impulse Buyer ⚡" / "The Planner 📊" /
+     "The Explorer ✈️"
+   - Personality name in big bubbly font
+   - 2 line personality description below
+
+2. VISUAL INSIGHT CARDS (3 cards)
+   Each card should have:
+   - Large emoji icon (not small)
+   - Bold insight title
+   - One actionable TIP (not a fact)
+     Example: "Try the 24hr rule before buying 
+     anything over ₹500 this week! ✨"
+   - Gradient background unique per card:
+     Card 1: pink to purple
+     Card 2: blue to teal  
+     Card 3: yellow to orange
+   - Smooth slide-in animation
+
+3. WEEKLY MOOD CHART
+   - Visual chart showing spending by mood
+   - Show which mood causes most spending
+   - Cute label like "you spend most when 😴 bored"
+
+4. GEMINI AI TIPS SECTION
+   - Title: "your AI bestie says... 🤖✨"
+   - 3 personalized tips from Gemini
+   - Each tip in a frosted glass bubble
+   - Tips should be actionable not just facts
+   - Loading: bouncing sparkle animation ✨
+
+Use GEMINI_API_KEY from environment variables.
+Use model gemini-1.5-flash.
+
+─── FINANCIAL PET PAGE ───
+Make it much more engaging and emotional:
+
+1. PET DISPLAY (hero section)
+   - Large pet emoji (3x bigger than before)
+   - Pet name in big cute font
+   - Animated emotion based on spending:
+     * Under 50% budget → HAPPY 😊
+       Pet bounces up and down
+       Sparkles around pet ✨
+       Speech: "omg you're literally killing it! 
+       i'm so proud of you bestie 🌟"
+     * 50-80% budget → OKAY 😐
+       Pet sways gently
+       Speech: "we're doing okay! just watch 
+       the spending a little 👀"
+     * 80-100% budget → WORRIED 😰
+       Pet shakes nervously
+       Speech: "bestie... we're getting close 
+       to the limit 😬 maybe skip that 
+       takeout today?"
+     * Over budget → SAD 😢
+       Pet droops down
+       Rain cloud animation above pet 🌧️
+       Speech: "i'm not mad just disappointed... 
+       let's fix this together 💔"
+
+2. HAPPINESS METER
+   - Cute progress bar with paw prints 🐾
+   - Label: "mochi's happiness"
+   - Changes color: green → yellow → orange → red
+
+3. PET STATS (fun cards below)
+   - "days you made me happy 🌟" → count
+   - "times you overspent 😅" → count  
+   - "current streak 🔥" → days within budget
+
+4. PET MESSAGE HISTORY
+   - Last 3 messages from pet
+   - Small chat bubble style
+   - Shows date
+
+5. CHEER UP BUTTON
+   - "cheer up [pet name]! 💝" button
+   - Shows when pet is sad/worried
+   - Clicking shows a motivational tip
+   - Pet briefly becomes happy with animation
+
+Keep the pink/purple Y2K Gen-Z theme throughout.
+Make all animations smooth using CSS.
+Use real spending data from Supabase.
