@@ -1,0 +1,81 @@
+Redesign the Dashboard to include a comprehensive 
+transaction and spending analytics section.
+
+─── TIME FILTER BAR ───
+At the top of dashboard add a horizontal 
+scrollable pill filter:
+Weekly | Monthly | Quarterly | Half Yearly | Yearly
+
+- Selected pill: gradient pink to purple, white text
+- Unselected: frosted glass, light text
+- All data below updates when filter changes
+
+─── SPENDING OVERVIEW CARD ───
+Big hero card showing for selected period:
+- Total Spent (large gradient number)
+- Total Saved
+- vs Previous period: "↑ 12% more than last month"
+- Color coded: green if better, red if worse
+
+─── VISUAL CHARTS SECTION ───
+
+1. SPENDING TREND CHART
+   - Line chart using Recharts
+   - Shows spending over selected time period
+   - Gradient fill under the line (pink/purple)
+   - Dots on each data point
+   - Smooth curved line
+
+2. CATEGORY BREAKDOWN
+   - Donut/pie chart in center
+   - Each category different color
+   - Tap category to highlight it
+   - List below with:
+     Category emoji | Name | Amount | % of total
+   - Sorted by highest spending first
+
+3. INCOME vs SPENDING BAR CHART
+   - Side by side bars each week/month
+   - Income bar: purple
+   - Spending bar: pink
+   - Savings gap shown between them
+
+─── SAVINGS TRACKER ───
+Visual savings progress for selected period:
+- Big circular progress ring
+- Center shows: "saved ₹X of ₹Y goal"
+- Color: green gradient when doing well
+- Below: "₹X more to reach your goal! 💎"
+
+─── TRANSACTION HISTORY ───
+Full transaction list for selected period:
+
+Each transaction shows:
+- Category emoji
+- Description/note
+- Mood emoji
+- Date
+- Amount in pink/red
+
+Features:
+- Search bar to find transactions
+- Filter by category (pill buttons)
+- Filter by mood
+- Sort by: Date | Amount | Category
+- Pagination (10 per page)
+- Empty state: "no transactions yet! 
+  add your first one 💸"
+
+─── SPENDING INSIGHTS ROW ───
+3 small stat cards:
+- "biggest splurge 💸" → highest single expense
+- "most expensive day 📅" → date with most spending  
+- "favourite category 🏆" → most used category
+
+All data fetched from Supabase filtered by 
+selected time period.
+All charts use Recharts library.
+Keep pink/purple Y2K Gen-Z theme.
+Smooth animations when switching time periods.
+Mobile responsive - charts should scroll 
+horizontally on small screens.
