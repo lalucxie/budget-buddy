@@ -6,13 +6,20 @@ import { useAuth } from "@/context/auth-context";
 type AuthMode = "hero" | "signin" | "signup";
 
 export default function Landing() {
-  const [mode, setMode]       = useState<AuthMode>("hero");
-  const [name, setName]       = useState("");
-  const [email, setEmail]     = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError]     = useState("");
+  const [mode, setMode] = useState<AuthMode>("hero");
+
+  // signup fields
+  const [signupName, setSignupName]       = useState("");
+  const [signupEmail, setSignupEmail]     = useState("");
+  const [signupPassword, setSignupPassword] = useState("");
+
+  // login fields — accepts username OR email
+  const [loginId, setLoginId]             = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
+
+  const [error, setError]   = useState("");
   const [loading, setLoading] = useState(false);
-  const navigate  = useNavigate();
+  const navigate = useNavigate();
   const { user, profile, loading: authLoading } = useAuth();
 
   if (authLoading) return null;
@@ -20,26 +27,64 @@ export default function Landing() {
     return <Navigate to={profile?.onboarding_complete ? "/dashboard" : "/setup"} replace />;
   }
 
+  /* ── Sign up ─────────────────────────────────────────────────────────── */
   async function handleSignUp() {
     setError("");
     setLoading(true);
-    const { data, error: authErr } = await supabase.auth.signUp({ email, password });
+
+    const { data, error: authErr } = await supabase.auth.signUp({
+      email: signupEmail,
+      password: signupPassword,
+    });
+
     if (authErr) { setError(authErr.message); setLoading(false); return; }
-    if (data.user && name.trim()) {
+
+    if (data.user) {
+      // Save username (name) + email so login-by-username works later
       await supabase
         .from("profiles")
-        .upsert({ user_id: data.user.id, name: name.trim() }, { onConflict: "user_id" });
+        .upsert(
+          { user_id: data.user.id, name: signupName.trim() || signupEmail.split("@")[0], email: signupEmail.trim().toLowerCase() },
+          { onConflict: "user_id" }
+        );
     }
+
     setLoading(false);
     navigate("/setup");
   }
 
+  /* ── Sign in ─────────────────────────────────────────────────────────── */
   async function handleSignIn() {
     setError("");
     setLoading(true);
-    const { data, error: authErr } = await supabase.auth.signInWithPassword({ email, password });
+
+    let emailToUse = loginId.trim();
+
+    // If no "@" treat as username — look up the matching email in profiles
+    if (!emailToUse.includes("@")) {
+      const { data: profileRow, error: lookupErr } = await supabase
+        .from("profiles")
+        .select("email")
+        .ilike("name", emailToUse)
+        .limit(1)
+        .maybeSingle();
+
+      if (lookupErr || !profileRow?.email) {
+        setError("username not found — try signing in with your email instead 💌");
+        setLoading(false);
+        return;
+      }
+      emailToUse = profileRow.email;
+    }
+
+    const { data, error: authErr } = await supabase.auth.signInWithPassword({
+      email: emailToUse,
+      password: loginPassword,
+    });
+
     setLoading(false);
     if (authErr) { setError(authErr.message); return; }
+
     if (data.user) {
       const { data: p } = await supabase
         .from("profiles")
@@ -50,11 +95,15 @@ export default function Landing() {
     }
   }
 
-  const inputClass = "w-full bg-white/60 border border-white/80 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 text-foreground placeholder:text-muted-foreground/70 transition-all font-medium";
+  const inputClass =
+    "w-full bg-white/60 border border-white/80 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/50 text-foreground placeholder:text-muted-foreground/70 transition-all";
 
+  /* ── Auth forms ──────────────────────────────────────────────────────── */
   if (mode === "signin" || mode === "signup") {
+    const isSignup = mode === "signup";
     return (
       <div className="flex flex-col items-center justify-center min-h-[100dvh] relative px-6 text-center overflow-hidden">
+        {/* Background sparkles */}
         <div className="absolute inset-0 pointer-events-none">
           <span className="absolute top-[10%] left-[10%] text-3xl sparkle text-pink-300">✦</span>
           <span className="absolute top-[20%] right-[15%] text-2xl sparkle text-purple-300" style={{ animationDelay: "0.5s" }}>✧</span>
@@ -74,10 +123,10 @@ export default function Landing() {
 
           <div className="space-y-1">
             <h2 className="text-3xl font-extrabold font-serif gradient-text">
-              {mode === "signup" ? "join the club 💅" : "hey, you're back!"}
+              {isSignup ? "join the club 💅" : "hey, you're back!"}
             </h2>
-            <p className="text-sm text-muted-foreground font-accent text-base">
-              {mode === "signup"
+            <p className="font-accent text-lg text-muted-foreground">
+              {isSignup
                 ? "your wallet's about to get its life together"
                 : "welcome back, let's check on your coins 🪙"}
             </p>
@@ -85,68 +134,110 @@ export default function Landing() {
 
           <div className="glass-card p-6 space-y-4 text-left">
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-600 text-xs rounded-xl px-4 py-3 font-medium">{error}</div>
-            )}
-
-            {mode === "signup" && (
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-foreground/60 uppercase tracking-wide">Your name</label>
-                <input
-                  data-testid="input-name"
-                  type="text"
-                  value={name}
-                  onChange={e => setName(e.target.value)}
-                  placeholder="what should we call you? ✨"
-                  className={inputClass}
-                  autoComplete="name"
-                />
+              <div className="bg-red-50 border border-red-200 text-red-600 text-xs rounded-xl px-4 py-3 font-medium">
+                {error}
               </div>
             )}
 
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-foreground/60 uppercase tracking-wide">Email</label>
-              <input
-                data-testid="input-email"
-                type="email"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                placeholder="bestie@email.com"
-                className={inputClass}
-              />
-            </div>
+            {isSignup ? (
+              /* ── SIGN UP FIELDS ── */
+              <>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-foreground/60 uppercase tracking-wide">username</label>
+                  <input
+                    data-testid="input-name"
+                    type="text"
+                    value={signupName}
+                    onChange={e => setSignupName(e.target.value)}
+                    placeholder="what should we call you? ✨"
+                    className={inputClass}
+                    autoComplete="username"
+                    autoFocus
+                  />
+                  <p className="text-[11px] text-muted-foreground/70 pl-1 font-accent">you'll use this to log in later</p>
+                </div>
 
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-foreground/60 uppercase tracking-wide">Password</label>
-              <input
-                data-testid="input-password"
-                type="password"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                placeholder="••••••••"
-                className={inputClass}
-                onKeyDown={e => e.key === "Enter" && (mode === "signup" ? handleSignUp() : handleSignIn())}
-              />
-            </div>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-foreground/60 uppercase tracking-wide">email</label>
+                  <input
+                    data-testid="input-email"
+                    type="email"
+                    value={signupEmail}
+                    onChange={e => setSignupEmail(e.target.value)}
+                    placeholder="bestie@email.com"
+                    className={inputClass}
+                  />
+                </div>
 
-            <button
-              data-testid={mode === "signup" ? "button-signup" : "button-signin"}
-              onClick={mode === "signup" ? handleSignUp : handleSignIn}
-              disabled={loading || !email || !password}
-              className="w-full gradient-btn py-3.5 text-base disabled:opacity-50 disabled:cursor-not-allowed mt-2"
-            >
-              {loading
-                ? "one sec bestie..."
-                : mode === "signup"
-                  ? "let's go ✨"
-                  : "sign in 💕"}
-            </button>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-foreground/60 uppercase tracking-wide">password</label>
+                  <input
+                    data-testid="input-password"
+                    type="password"
+                    value={signupPassword}
+                    onChange={e => setSignupPassword(e.target.value)}
+                    placeholder="••••••••"
+                    className={inputClass}
+                    onKeyDown={e => e.key === "Enter" && handleSignUp()}
+                  />
+                </div>
+
+                <button
+                  data-testid="button-signup"
+                  onClick={handleSignUp}
+                  disabled={loading || !signupEmail || !signupPassword}
+                  className="w-full gradient-btn py-3.5 text-base disabled:opacity-50 disabled:cursor-not-allowed mt-2"
+                >
+                  {loading ? "one sec bestie..." : "create account ✨"}
+                </button>
+              </>
+            ) : (
+              /* ── SIGN IN FIELDS ── */
+              <>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-foreground/60 uppercase tracking-wide">username or email</label>
+                  <input
+                    data-testid="input-login-id"
+                    type="text"
+                    value={loginId}
+                    onChange={e => setLoginId(e.target.value)}
+                    placeholder="your username or email"
+                    className={inputClass}
+                    autoComplete="username"
+                    autoFocus
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-foreground/60 uppercase tracking-wide">password</label>
+                  <input
+                    data-testid="input-password"
+                    type="password"
+                    value={loginPassword}
+                    onChange={e => setLoginPassword(e.target.value)}
+                    placeholder="••••••••"
+                    className={inputClass}
+                    onKeyDown={e => e.key === "Enter" && handleSignIn()}
+                  />
+                </div>
+
+                <button
+                  data-testid="button-signin"
+                  onClick={handleSignIn}
+                  disabled={loading || !loginId || !loginPassword}
+                  className="w-full gradient-btn py-3.5 text-base disabled:opacity-50 disabled:cursor-not-allowed mt-2"
+                >
+                  {loading ? "checking... 🔍" : "sign in 💕"}
+                </button>
+              </>
+            )}
           </div>
 
           <button
-            onClick={() => { setMode(mode === "signup" ? "signin" : "signup"); setError(""); }}
+            onClick={() => { setMode(isSignup ? "signin" : "signup"); setError(""); }}
             className="text-sm text-muted-foreground hover:text-primary transition-colors font-medium"
           >
-            {mode === "signup"
+            {isSignup
               ? "already have an account? sign in 💕"
               : "new here? create a free account ✨"}
           </button>
@@ -155,6 +246,7 @@ export default function Landing() {
     );
   }
 
+  /* ── Hero landing ────────────────────────────────────────────────────── */
   return (
     <div className="flex flex-col items-center justify-center min-h-[100dvh] relative px-6 text-center overflow-hidden">
       <div className="absolute inset-0 pointer-events-none">
@@ -183,7 +275,7 @@ export default function Landing() {
             your money has trust issues.
             <br />fix that.
           </p>
-          <p className="text-sm font-accent text-muted-foreground text-base">
+          <p className="font-accent text-lg text-muted-foreground">
             track every spend. slay every goal. finally, a finance app that gets you.
           </p>
         </div>

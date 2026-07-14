@@ -11,6 +11,7 @@ export type UserProfile = {
   id: string;
   user_id: string;
   name: string;
+  email?: string;
   monthly_income: number;
   pet_choice: string;
   onboarding_complete: boolean;
