@@ -66,12 +66,15 @@ function getPrevPeriodRange(period: FilterPeriod): { start: Date; end: Date } {
 function buildTrendData(expenses: Expense[], period: FilterPeriod) {
   const now = new Date();
   const DAY_NAMES = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const MONTHS_SHORT = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
   if (period === "weekly") {
     const buckets: { label: string; key: string; amount: number }[] = [];
     for (let i = 6; i >= 0; i--) {
       const d = new Date(now); d.setDate(now.getDate() - i);
-      buckets.push({ label: DAY_NAMES[d.getDay()]!, key: d.toISOString().split("T")[0]!, amount: 0 });
+      // e.g. "Mon 14"
+      const label = `${DAY_NAMES[d.getDay()]!} ${d.getDate()}`;
+      buckets.push({ label, key: d.toISOString().split("T")[0]!, amount: 0 });
     }
     expenses.forEach(e => {
       const key = e.date ?? e.created_at.split("T")[0]!;
@@ -86,15 +89,20 @@ function buildTrendData(expenses: Expense[], period: FilterPeriod) {
     for (let i = 29; i >= 0; i--) {
       const d = new Date(now); d.setDate(now.getDate() - i);
       const key = d.toISOString().split("T")[0]!;
-      buckets.push({ label: `${d.getDate()}`, key, amount: 0 });
+      const idx = 29 - i; // 0 = oldest, 29 = today
+      // Show label at start, every 7 days, and today — e.g. "16 Jun", "23 Jun"
+      const showLabel = idx === 0 || idx % 7 === 0 || idx === 29;
+      const label = showLabel
+        ? `${d.getDate()} ${MONTHS_SHORT[d.getMonth()]!}`
+        : "";
+      buckets.push({ label, key, amount: 0 });
     }
     expenses.forEach(e => {
       const key = e.date ?? e.created_at.split("T")[0]!;
       const s = buckets.find(b => b.key === key);
       if (s) s.amount += e.amount;
     });
-    // Downsample: show every 3rd label to avoid crowding
-    return buckets.map((b, i) => ({ ...b, label: i % 3 === 0 ? b.label : "" }));
+    return buckets.map(({ label, amount }) => ({ label, amount }));
   }
 
   // Quarterly, Half-yearly, Yearly → monthly buckets
@@ -103,7 +111,11 @@ function buildTrendData(expenses: Expense[], period: FilterPeriod) {
   for (let i = monthCount - 1; i >= 0; i--) {
     const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
     const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
-    months.push({ label: d.toLocaleString("default", { month: "short" }), key, amount: 0 });
+    // For yearly, add year suffix e.g. "Jan '24"; for shorter periods just "Jan"
+    const label = period === "yearly"
+      ? `${MONTHS_SHORT[d.getMonth()]!} '${String(d.getFullYear()).slice(2)}`
+      : MONTHS_SHORT[d.getMonth()]!;
+    months.push({ label, key, amount: 0 });
   }
   expenses.forEach(e => {
     const key = e.created_at.slice(0, 7);
@@ -545,7 +557,7 @@ export default function Dashboard() {
           <p className="text-center py-8 font-accent text-lg text-muted-foreground">nothing here yet — but every glow up starts somewhere ✨</p>
         ) : (
           <div className="overflow-x-auto no-scrollbar -mx-1">
-            <div style={{ minWidth: Math.max(300, trendData.length * (filter === "monthly" ? 14 : 36)) }}>
+            <div style={{ minWidth: Math.max(320, trendData.length * (filter === "monthly" ? 16 : 52)) }}>
               <ResponsiveContainer width="100%" height={150}>
                 <AreaChart data={trendData} margin={{ left: 2, right: 2, top: 4, bottom: 0 }}>
                   <defs>
