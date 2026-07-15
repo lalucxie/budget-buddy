@@ -357,31 +357,74 @@ export default function Dashboard() {
           </div>
         ) : (
           <>
-            <div className="text-center space-y-1.5">
-              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">total spent</p>
-              <p className="text-5xl font-extrabold font-serif leading-none gradient-text">{INR(totalSpent)}</p>
-              {vsPercent !== null && (
+            {/* ── Big headline ── */}
+            <div className="text-center space-y-1">
+              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+                {income > 0 ? "budget remaining" : "total spent"}
+              </p>
+              <p className="text-5xl font-extrabold font-serif leading-none gradient-text">
+                {income > 0 ? INR(Math.max(0, income - totalSpent)) : INR(totalSpent)}
+              </p>
+              {income > 0 ? (
+                <p className="text-xs text-muted-foreground font-medium mt-0.5">
+                  of {INR(income)} monthly budget
+                </p>
+              ) : vsPercent !== null && (
                 <div className="flex items-center justify-center gap-1.5 mt-1">
-                  <span
-                    className="text-sm font-bold"
-                    style={{ color: vsPercent > 0 ? "#F87171" : "#34D399" }}
-                  >
+                  <span className="text-sm font-bold" style={{ color: vsPercent > 0 ? "#F87171" : "#34D399" }}>
                     {vsPercent > 0 ? "↑" : "↓"} {Math.abs(Math.round(vsPercent))}%
                   </span>
                   <span className="text-xs text-muted-foreground">vs previous period</span>
                 </div>
               )}
             </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="rounded-2xl p-3.5 text-center space-y-1"
-                style={{ background: "rgba(52,211,153,0.1)", border: "1.5px solid rgba(52,211,153,0.25)" }}>
-                <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-wide">total saved 💎</p>
-                <p className="text-xl font-extrabold" style={{ color: "#34D399" }}>{INR(totalSaved)}</p>
+
+            {/* ── Budget progress bar (only when income is set) ── */}
+            {income > 0 && (() => {
+              const pct  = Math.min(100, (totalSpent / income) * 100);
+              const over = totalSpent > income;
+              const barColor = over
+                ? "linear-gradient(90deg,#F87171,#EF4444)"
+                : pct > 80
+                ? "linear-gradient(90deg,#FFB347,#FF6B9D)"
+                : "linear-gradient(90deg,#FF6B9D,#B06EFF)";
+              return (
+                <div className="space-y-1.5 pt-1">
+                  <div className="h-3 bg-white/40 rounded-full overflow-hidden">
+                    <div className="h-full rounded-full transition-all duration-700"
+                      style={{ width: `${pct}%`, background: barColor }} />
+                  </div>
+                  <div className="flex justify-between items-center text-[10px] font-bold text-muted-foreground">
+                    <span>spent {INR(totalSpent)}</span>
+                    <span style={{ color: over ? "#F87171" : pct > 80 ? "#FFB347" : "inherit" }}>
+                      {over ? `over by ${INR(totalSpent - income)} 😬` : `${Math.round(pct)}% used`}
+                    </span>
+                  </div>
+                  {vsPercent !== null && (
+                    <p className="text-center text-[10px] font-bold" style={{ color: vsPercent > 0 ? "#F87171" : "#34D399" }}>
+                      {vsPercent > 0 ? "↑" : "↓"} {Math.abs(Math.round(vsPercent))}% vs last period
+                    </p>
+                  )}
+                </div>
+              );
+            })()}
+
+            {/* ── Stats grid ── */}
+            <div className="grid grid-cols-3 gap-2">
+              <div className="rounded-2xl p-3 text-center space-y-0.5"
+                style={{ background: "rgba(255,107,157,0.1)", border: "1.5px solid rgba(255,107,157,0.25)" }}>
+                <p className="text-[8px] font-bold text-muted-foreground uppercase tracking-wide">spent 💸</p>
+                <p className="text-base font-extrabold" style={{ color: "#FF6B9D" }}>{INR(totalSpent)}</p>
               </div>
-              <div className="rounded-2xl p-3.5 text-center space-y-1"
+              <div className="rounded-2xl p-3 text-center space-y-0.5"
+                style={{ background: "rgba(52,211,153,0.1)", border: "1.5px solid rgba(52,211,153,0.25)" }}>
+                <p className="text-[8px] font-bold text-muted-foreground uppercase tracking-wide">saved 💎</p>
+                <p className="text-base font-extrabold" style={{ color: "#34D399" }}>{INR(totalSaved)}</p>
+              </div>
+              <div className="rounded-2xl p-3 text-center space-y-0.5"
                 style={{ background: "rgba(96,165,250,0.1)", border: "1.5px solid rgba(96,165,250,0.25)" }}>
-                <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-wide">transactions ✨</p>
-                <p className="text-xl font-extrabold" style={{ color: "#60A5FA" }}>{expenses.length}</p>
+                <p className="text-[8px] font-bold text-muted-foreground uppercase tracking-wide">txns ✨</p>
+                <p className="text-base font-extrabold" style={{ color: "#60A5FA" }}>{expenses.length}</p>
               </div>
             </div>
           </>
