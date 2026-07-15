@@ -63,66 +63,119 @@ function getPrevPeriodRange(period: FilterPeriod): { start: Date; end: Date } {
 }
 
 // ─── Chart data builders ──────────────────────────────────────────────────────
-function buildTrendData(expenses: Expense[], period: FilterPeriod) {
+const MONTHS_SHORT = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const DAY_NAMES_SHORT = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+
+type TrendPoint = { label: string; amount: number; isToday: boolean; isFuture: boolean };
+
+function buildTrendData(expenses: Expense[], period: FilterPeriod): TrendPoint[] {
   const now = new Date();
-  const DAY_NAMES = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-  const MONTHS_SHORT = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  const todayKey = now.toISOString().split("T")[0]!;
 
+  // ── Weekly: Mon → Sun of current week ──────────────────────────────────────
   if (period === "weekly") {
-    const buckets: { label: string; key: string; amount: number }[] = [];
-    for (let i = 6; i >= 0; i--) {
-      const d = new Date(now); d.setDate(now.getDate() - i);
-      // e.g. "Mon 14"
-      const label = `${DAY_NAMES[d.getDay()]!} ${d.getDate()}`;
-      buckets.push({ label, key: d.toISOString().split("T")[0]!, amount: 0 });
-    }
-    expenses.forEach(e => {
-      const key = e.date ?? e.created_at.split("T")[0]!;
-      const s = buckets.find(b => b.key === key);
-      if (s) s.amount += e.amount;
-    });
-    return buckets.map(({ label, amount }) => ({ label, amount }));
-  }
+    const dow = now.getDay(); // 0=Sun
+    const daysFromMon = dow === 0 ? 6 : dow - 1;
+    const monday = new Date(now);
+    monday.setDate(now.getDate() - daysFromMon);
 
-  if (period === "monthly") {
-    const buckets: { label: string; key: string; amount: number }[] = [];
-    for (let i = 29; i >= 0; i--) {
-      const d = new Date(now); d.setDate(now.getDate() - i);
+    const buckets: (TrendPoint & { key: string })[] = [];
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(monday); d.setDate(monday.getDate() + i);
       const key = d.toISOString().split("T")[0]!;
-      const idx = 29 - i; // 0 = oldest, 29 = today
-      // Show label at start, every 7 days, and today — e.g. "16 Jun", "23 Jun"
-      const showLabel = idx === 0 || idx % 7 === 0 || idx === 29;
-      const label = showLabel
-        ? `${d.getDate()} ${MONTHS_SHORT[d.getMonth()]!}`
-        : "";
-      buckets.push({ label, key, amount: 0 });
+      buckets.push({ label: DAY_NAMES_SHORT[i]!, key, amount: 0, isToday: key === todayKey, isFuture: d > now });
     }
     expenses.forEach(e => {
       const key = e.date ?? e.created_at.split("T")[0]!;
       const s = buckets.find(b => b.key === key);
       if (s) s.amount += e.amount;
     });
-    return buckets.map(({ label, amount }) => ({ label, amount }));
+    return buckets.map(({ label, amount, isToday, isFuture }) => ({ label, amount, isToday, isFuture }));
   }
 
-  // Quarterly, Half-yearly, Yearly → monthly buckets
-  const monthCount = period === "quarterly" ? 3 : period === "half-yearly" ? 6 : 12;
-  const months: { label: string; key: string; amount: number }[] = [];
-  for (let i = monthCount - 1; i >= 0; i--) {
-    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
-    // For yearly, add year suffix e.g. "Jan '24"; for shorter periods just "Jan"
-    const label = period === "yearly"
-      ? `${MONTHS_SHORT[d.getMonth()]!} '${String(d.getFullYear()).slice(2)}`
-      : MONTHS_SHORT[d.getMonth()]!;
-    months.push({ label, key, amount: 0 });
+  // ── Monthly: day 1 → last day of current month ─────────────────────────────
+  if (period === "monthly") {
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const buckets: (TrendPoint & { key: string })[] = [];
+    for (let day = 1; day <= daysInMonth; day++) {
+      const d = new Date(year, month, day);
+      const key = d.toISOString().split("T")[0]!;
+      const showLabel = day === 1 || day === 8 || day === 15 || day === 22 || day === daysInMonth;
+      buckets.push({
+        label: showLabel ? `${day}` : "",
+        key, amount: 0,
+        isToday: key === todayKey,
+        isFuture: d > now,
+      });
+    }
+    expenses.forEach(e => {
+      const key = e.date ?? e.created_at.split("T")[0]!;
+      const s = buckets.find(b => b.key === key);
+      if (s) s.amount += e.amount;
+    });
+    return buckets.map(({ label, amount, isToday, isFuture }) => ({ label, amount, isToday, isFuture }));
+  }
+
+  // ── Quarterly: current quarter (Jan–Mar / Apr–Jun / Jul–Sep / Oct–Dec)
+  //    split into weekly buckets — ~4 per month ─────────────────────────────
+  if (period === "quarterly") {
+    const qMonthStart = Math.floor(now.getMonth() / 3) * 3;
+    const qStart = new Date(now.getFullYear(), qMonthStart, 1);
+    const qEnd   = new Date(now.getFullYear(), qMonthStart + 3, 0);
+    const weeks: (TrendPoint & { startKey: string; endKey: string })[] = [];
+    const cur = new Date(qStart);
+    while (cur <= qEnd) {
+      const wStart = new Date(cur);
+      const wEnd   = new Date(cur); wEnd.setDate(cur.getDate() + 6);
+      if (wEnd > qEnd) wEnd.setTime(qEnd.getTime());
+      const startKey = wStart.toISOString().split("T")[0]!;
+      const endKey   = wEnd.toISOString().split("T")[0]!;
+      const isFirstWeek = wStart.getDate() <= 7;
+      const label = isFirstWeek ? `${MONTHS_SHORT[wStart.getMonth()]}` : `${wStart.getDate()}`;
+      weeks.push({ label, startKey, endKey, amount: 0, isToday: false, isFuture: wStart > now });
+      cur.setDate(cur.getDate() + 7);
+    }
+    expenses.forEach(e => {
+      const k = e.date ?? e.created_at.split("T")[0]!;
+      const b = weeks.find(w => k >= w.startKey && k <= w.endKey);
+      if (b) b.amount += e.amount;
+    });
+    return weeks.map(({ label, amount, isToday, isFuture }) => ({ label, amount, isToday, isFuture }));
+  }
+
+  // ── Half-yearly: first half (Jan–Jun) or second half (Jul–Dec) ────────────
+  if (period === "half-yearly") {
+    const halfStart = now.getMonth() < 6 ? 0 : 6;
+    const months: (TrendPoint & { key: string })[] = [];
+    for (let m = halfStart; m < halfStart + 6; m++) {
+      const d = new Date(now.getFullYear(), m, 1);
+      const key = `${d.getFullYear()}-${String(m + 1).padStart(2, "0")}`;
+      months.push({ label: MONTHS_SHORT[m]!, key, amount: 0, isToday: false, isFuture: d > now });
+    }
+    expenses.forEach(e => {
+      const key = e.created_at.slice(0, 7);
+      const s = months.find(m => m.key === key);
+      if (s) s.amount += e.amount;
+    });
+    return months.map(({ label, amount, isToday, isFuture }) => ({ label, amount, isToday, isFuture }));
+  }
+
+  // ── Yearly: Jan → Dec of current year ─────────────────────────────────────
+  const year = now.getFullYear();
+  const months: (TrendPoint & { key: string })[] = [];
+  for (let m = 0; m < 12; m++) {
+    const d = new Date(year, m, 1);
+    const key = `${year}-${String(m + 1).padStart(2, "0")}`;
+    months.push({ label: MONTHS_SHORT[m]!, key, amount: 0, isToday: false, isFuture: d > now });
   }
   expenses.forEach(e => {
     const key = e.created_at.slice(0, 7);
     const s = months.find(m => m.key === key);
     if (s) s.amount += e.amount;
   });
-  return months.map(({ label, amount }) => ({ label, amount }));
+  return months.map(({ label, amount, isToday, isFuture }) => ({ label, amount, isToday, isFuture }));
 }
 
 function buildIncomeVsSpend(expenses: Expense[], period: FilterPeriod, monthlyIncome: number) {
