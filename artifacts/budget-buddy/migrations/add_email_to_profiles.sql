@@ -6,8 +6,8 @@ ALTER TABLE profiles
   ADD COLUMN IF NOT EXISTS email text;
 
 -- 2. Allow unauthenticated users to look up email by username (for login)
---    This only exposes name + email — nothing sensitive.
-CREATE POLICY IF NOT EXISTS "anon_username_lookup"
+--    Note: IF NOT EXISTS is not supported for CREATE POLICY — omit it.
+CREATE POLICY "anon_username_lookup"
   ON profiles
   FOR SELECT
   TO anon
