@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 import { AuthProvider, useAuth } from "@/context/auth-context";
+import { ThemeProvider } from "@/context/theme-context";
 import { Navigation } from "@/components/Navigation";
 import Landing from "@/pages/landing";
 import Setup from "@/pages/setup";
@@ -17,7 +18,7 @@ import NotFound from "@/pages/not-found";
 const queryClient = new QueryClient();
 
 const Loader = () => (
-  <div className="max-w-[430px] mx-auto min-h-screen flex items-center justify-center bg-gradient-to-br from-[#E8D5F5] to-[#FFD6E7]">
+  <div className="max-w-[430px] mx-auto min-h-screen flex items-center justify-center">
     <div className="text-center space-y-3">
       <div className="text-5xl float inline-block">💰</div>
       <p className="text-muted-foreground text-sm font-medium animate-pulse">loading your vibe...</p>
@@ -35,7 +36,7 @@ function ProtectedRoute() {
   if (!justCompletedSetup && !profile?.onboarding_complete) return <Navigate to="/setup" replace />;
 
   return (
-    <div className="max-w-[430px] mx-auto min-h-screen relative pb-24 shadow-2xl bg-gradient-to-br from-[#E8D5F5] to-[#FFD6E7] overflow-x-hidden">
+    <div className="max-w-[430px] mx-auto min-h-screen relative pb-24 shadow-2xl overflow-x-hidden">
       <Outlet />
       <Navigation />
     </div>
@@ -50,7 +51,7 @@ function SetupRoute() {
   if (profile?.onboarding_complete) return <Navigate to="/dashboard" replace />;
 
   return (
-    <div className="max-w-[430px] mx-auto min-h-screen relative shadow-2xl bg-gradient-to-br from-[#E8D5F5] to-[#FFD6E7] overflow-x-hidden">
+    <div className="max-w-[430px] mx-auto min-h-screen relative shadow-2xl overflow-x-hidden">
       <Setup />
     </div>
   );
@@ -60,7 +61,7 @@ function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={
-        <div className="max-w-[430px] mx-auto min-h-screen relative shadow-2xl bg-gradient-to-br from-[#E8D5F5] to-[#FFD6E7] overflow-x-hidden">
+        <div className="max-w-[430px] mx-auto min-h-screen relative shadow-2xl overflow-x-hidden">
           <Landing />
         </div>
       } />
@@ -81,11 +82,13 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, "")}>
-          <AuthProvider>
-            <AppRoutes />
-          </AuthProvider>
-        </BrowserRouter>
+        <ThemeProvider>
+          <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, "")}>
+            <AuthProvider>
+              <AppRoutes />
+            </AuthProvider>
+          </BrowserRouter>
+        </ThemeProvider>
         <Toaster />
       </TooltipProvider>
     </QueryClientProvider>

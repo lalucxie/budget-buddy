@@ -1,10 +1,11 @@
 import { useState, useEffect, useMemo } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
   XAxis, YAxis, Tooltip, ResponsiveContainer,
 } from "recharts";
 import { useAuth } from "@/context/auth-context";
+import { useTheme } from "@/context/theme-context";
 import { supabase } from "@/lib/supabase";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -202,12 +203,16 @@ function SavingsRing({ pct, saved, target }: { pct: number; saved: number; targe
 // ─── Dashboard ────────────────────────────────────────────────────────────────
 export default function Dashboard() {
   const { user, profile } = useAuth();
+  const { theme, toggle: toggleTheme } = useTheme();
+  const navigate = useNavigate();
+
   const [filter, setFilter]         = useState<FilterPeriod>("monthly");
   const [expenses, setExpenses]     = useState<Expense[]>([]);
   const [prevAmt, setPrevAmt]       = useState<number>(0);
   const [goals, setGoals]           = useState<Goal[]>([]);
   const [loading, setLoading]       = useState(true);
   const [activeCat, setActiveCat]   = useState<number | null>(null);
+  const [showProfile, setShowProfile] = useState(false);
 
   // Transaction filters
   const [txSearch, setTxSearch]     = useState("");
@@ -221,6 +226,11 @@ export default function Dashboard() {
     const raw = (profile as any)?.name || user?.email?.split("@")[0] || "bestie";
     return raw.split(/[\s._]/)[0];
   })();
+
+  async function handleLogout() {
+    await supabase.auth.signOut();
+    navigate("/", { replace: true });
+  }
 
   const petEmoji = { luna: "🐱", mochi: "🐼", kitsune: "🦊", ribbit: "🐸" }[profile?.pet_choice ?? ""] ?? "💰";
 
@@ -315,11 +325,102 @@ export default function Dashboard() {
           <h1 className="text-2xl font-extrabold font-serif text-foreground">hey {firstName}! 💫</h1>
           <p className="font-accent text-lg text-muted-foreground">your wallet missed you 💸</p>
         </div>
-        <Link to="/pet"
-          className="w-11 h-11 rounded-full bg-white/60 border-2 border-white flex items-center justify-center text-2xl shadow-sm hover:scale-110 transition-transform">
+        <button
+          onClick={() => setShowProfile(true)}
+          className="w-11 h-11 rounded-full bg-white/60 border-2 border-white flex items-center justify-center text-2xl shadow-sm hover:scale-110 transition-transform"
+        >
           {petEmoji}
-        </Link>
+        </button>
       </div>
+
+      {/* ── Profile / Settings sheet ─────────────────────────────────────── */}
+      {showProfile && (
+        <div className="fixed inset-0 z-50 flex flex-col justify-end" onClick={() => setShowProfile(false)}>
+          {/* backdrop */}
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
+
+          {/* sheet */}
+          <div
+            className="relative glass-card rounded-b-none rounded-t-3xl p-6 space-y-5 mx-auto w-full max-w-[430px] animate-in slide-in-from-bottom-4 duration-300"
+            onClick={e => e.stopPropagation()}
+          >
+            {/* drag pill */}
+            <div className="w-10 h-1 rounded-full bg-muted-foreground/30 mx-auto -mt-1" />
+
+            {/* Avatar + name */}
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 rounded-full bg-white/60 border-2 border-white flex items-center justify-center text-3xl shadow">
+                {petEmoji}
+              </div>
+              <div>
+                <p className="font-extrabold font-serif text-lg text-foreground">{firstName}</p>
+                <p className="text-xs text-muted-foreground font-medium">{user?.email}</p>
+              </div>
+            </div>
+
+            <div className="border-t border-border/40" />
+
+            {/* Dark mode toggle */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-white/30 flex items-center justify-center text-lg">
+                  {theme === "dark" ? "🌙" : "☀️"}
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-foreground">dark mode</p>
+                  <p className="text-[11px] text-muted-foreground font-accent">
+                    {theme === "dark" ? "currently on ✨" : "currently off"}
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={toggleTheme}
+                className="relative w-12 h-6 rounded-full transition-all duration-300 focus:outline-none"
+                style={{
+                  background: theme === "dark"
+                    ? "linear-gradient(135deg, #FF6B9D, #B06EFF)"
+                    : "rgba(200,190,220,0.5)",
+                }}
+              >
+                <span
+                  className="absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-all duration-300"
+                  style={{ left: theme === "dark" ? "26px" : "2px" }}
+                />
+              </button>
+            </div>
+
+            {/* Pet page link */}
+            <Link
+              to="/pet"
+              onClick={() => setShowProfile(false)}
+              className="flex items-center gap-3 w-full"
+            >
+              <div className="w-9 h-9 rounded-xl bg-white/30 flex items-center justify-center text-lg">🐾</div>
+              <div>
+                <p className="text-sm font-bold text-foreground">your finance pet</p>
+                <p className="text-[11px] text-muted-foreground font-accent">see how {firstName}'s buddy is doing</p>
+              </div>
+              <span className="ml-auto text-muted-foreground text-sm">→</span>
+            </Link>
+
+            <div className="border-t border-border/40" />
+
+            {/* Logout */}
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-3 w-full group"
+            >
+              <div className="w-9 h-9 rounded-xl bg-red-100/60 flex items-center justify-center text-lg">🚪</div>
+              <div className="text-left">
+                <p className="text-sm font-bold text-red-500 group-hover:text-red-600 transition-colors">sign out</p>
+                <p className="text-[11px] text-muted-foreground font-accent">see you next time bestie 💕</p>
+              </div>
+            </button>
+
+            <div className="h-2" />
+          </div>
+        </div>
+      )}
 
       {/* ── TIME FILTER BAR ─────────────────────────────────────────────── */}
       <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
