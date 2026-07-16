@@ -1,1 +1,5 @@
-{"ignoreBuildErrors": true}
+{ 
+  "buildCommand": "cd artifacts/budget-buddy && npm run build" ,
+  "outputDirectory": "artifacts/budget-buddy/dist",
+  "installCommand": "cd artifacts/budget-buddy && npm install"
+}
