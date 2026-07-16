@@ -1,5 +1,5 @@
-{ 
-  "buildCommand": "cd artifacts/budget-buddy && npm run build" ,
-  "outputDirectory": "artifacts/budget-buddy/dist",
-  "installCommand": "cd artifacts/budget-buddy && npm install"
+{
+  "buildCommand": "pnpm --filter @workspace/budget-buddy run build" ,
+  "outputDirectory": "artifacts/budget-buddy/dist" ,
+  "installCommand": "pnpm install"
 }
