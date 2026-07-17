@@ -1,5 +1,6 @@
 {
-  "buildCommand": "pnpm --filter @workspace/budget-buddy run build" ,
-  "outputDirectory": "artifacts/budget-buddy/dist" ,
-  "installCommand": "pnpm install"
+  "buildCommand": "pnpm --filter @workspace/budget-buddy run build",
+  "outputDirectory": "artifacts/budget-buddy/dist",
+  "installCommand": "pnpm install",
+  "rewrites": [{ "source": "/(.*)", "destination": "index/html" }]
 }
