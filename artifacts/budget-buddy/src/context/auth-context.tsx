@@ -1,7 +1,7 @@
 type AuthContextValue = {
   user: User | null;
   session: Session | null;
-  UserProfile | null;
+  profile: UserProfile | null;
   loading: boolean; // true only until the very first auth+profile check completes
 };
 
@@ -40,7 +40,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
 
     // Keep in sync with auth state changes (sign in / sign out)
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
