@@ -9,22 +9,27 @@ export default function Landing() {
   const [mode, setMode] = useState<AuthMode>("hero");
 
   // signup fields
-  const [signupName, setSignupName]       = useState("");
-  const [signupEmail, setSignupEmail]     = useState("");
+  const [signupName, setSignupName] = useState("");
+  const [signupEmail, setSignupEmail] = useState("");
   const [signupPassword, setSignupPassword] = useState("");
 
   // login fields — accepts username OR email
-  const [loginId, setLoginId]             = useState("");
+  const [loginId, setLoginId] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
 
-  const [error, setError]   = useState("");
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { user, profile, loading: authLoading } = useAuth();
 
   if (authLoading) return null;
   if (user) {
-    return <Navigate to={profile?.onboarding_complete ? "/dashboard" : "/setup"} replace />;
+    return (
+      <Navigate
+        to={profile?.onboarding_complete ? "/dashboard" : "/setup"}
+        replace
+      />
+    );
   }
 
   /* ── Sign up ─────────────────────────────────────────────────────────── */
@@ -37,15 +42,23 @@ export default function Landing() {
       password: signupPassword,
     });
 
-    if (authErr) { setError(authErr.message); setLoading(false); return; }
+    if (authErr) {
+      setError(authErr.message);
+      setLoading(false);
+      return;
+    }
 
     if (data.user) {
       // Save username (name) + email so login-by-username works later
       await supabase
         .from("profiles")
         .upsert(
-          { user_id: data.user.id, name: signupName.trim() || signupEmail.split("@")[0], email: signupEmail.trim().toLowerCase() },
-          { onConflict: "user_id" }
+          {
+            user_id: data.user.id,
+            name: signupName.trim() || signupEmail.split("@")[0],
+            email: signupEmail.trim().toLowerCase(),
+          },
+          { onConflict: "user_id" },
         );
     }
 
@@ -70,7 +83,9 @@ export default function Landing() {
         .maybeSingle();
 
       if (lookupErr || !profileRow?.email) {
-        setError("username not found — try signing in with your email instead 💌");
+        setError(
+          "username not found — try signing in with your email instead 💌",
+        );
         setLoading(false);
         return;
       }
@@ -83,7 +98,10 @@ export default function Landing() {
     });
 
     setLoading(false);
-    if (authErr) { setError(authErr.message); return; }
+    if (authErr) {
+      setError(authErr.message);
+      return;
+    }
 
     if (data.user) {
       const { data: p } = await supabase
@@ -91,7 +109,9 @@ export default function Landing() {
         .select("onboarding_complete")
         .eq("user_id", data.user.id)
         .maybeSingle();
-      navigate(p?.onboarding_complete ? "/dashboard" : "/setup", { replace: true });
+      navigate(p?.onboarding_complete ? "/dashboard" : "/setup", {
+        replace: true,
+      });
     }
   }
 
@@ -105,15 +125,35 @@ export default function Landing() {
       <div className="flex flex-col items-center justify-center min-h-[100dvh] relative px-6 text-center overflow-hidden">
         {/* Background sparkles */}
         <div className="absolute inset-0 pointer-events-none">
-          <span className="absolute top-[10%] left-[10%] text-3xl sparkle text-pink-300">✦</span>
-          <span className="absolute top-[20%] right-[15%] text-2xl sparkle text-purple-300" style={{ animationDelay: "0.5s" }}>✧</span>
-          <span className="absolute bottom-[30%] left-[15%] text-4xl sparkle text-pink-400" style={{ animationDelay: "1s" }}>⊹</span>
-          <span className="absolute bottom-[20%] right-[20%] text-xl sparkle text-purple-400" style={{ animationDelay: "1.5s" }}>✦</span>
+          <span className="absolute top-[10%] left-[10%] text-3xl sparkle text-pink-300">
+            ✦
+          </span>
+          <span
+            className="absolute top-[20%] right-[15%] text-2xl sparkle text-purple-300"
+            style={{ animationDelay: "0.5s" }}
+          >
+            ✧
+          </span>
+          <span
+            className="absolute bottom-[30%] left-[15%] text-4xl sparkle text-pink-400"
+            style={{ animationDelay: "1s" }}
+          >
+            ⊹
+          </span>
+          <span
+            className="absolute bottom-[20%] right-[20%] text-xl sparkle text-purple-400"
+            style={{ animationDelay: "1.5s" }}
+          >
+            ✦
+          </span>
         </div>
 
         <div className="relative z-10 w-full max-w-sm space-y-6">
           <button
-            onClick={() => { setMode("hero"); setError(""); }}
+            onClick={() => {
+              setMode("hero");
+              setError("");
+            }}
             className="text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-1 mx-auto font-medium"
           >
             ← back
@@ -143,49 +183,62 @@ export default function Landing() {
               /* ── SIGN UP FIELDS ── */
               <>
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-foreground/60 uppercase tracking-wide">username</label>
+                  <label className="text-xs font-semibold text-foreground/60 uppercase tracking-wide">
+                    username
+                  </label>
                   <input
                     data-testid="input-name"
                     type="text"
                     value={signupName}
-                    onChange={e => setSignupName(e.target.value)}
+                    onChange={(e) => setSignupName(e.target.value)}
                     placeholder="what should we call you? ✨"
                     className={inputClass}
                     autoComplete="username"
                     autoFocus
                   />
-                  <p className="text-[11px] text-muted-foreground/70 pl-1 font-accent">you'll use this to log in later</p>
+                  <p className="text-[11px] text-muted-foreground/70 pl-1 font-accent">
+                    you'll use this to log in later
+                  </p>
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-foreground/60 uppercase tracking-wide">email</label>
+                  <label className="text-xs font-semibold text-foreground/60 uppercase tracking-wide">
+                    email
+                  </label>
                   <input
                     data-testid="input-email"
                     type="email"
                     value={signupEmail}
-                    onChange={e => setSignupEmail(e.target.value)}
+                    onChange={(e) => setSignupEmail(e.target.value)}
                     placeholder="bestie@email.com"
                     className={inputClass}
                   />
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-foreground/60 uppercase tracking-wide">password</label>
+                  <label className="text-xs font-semibold text-foreground/60 uppercase tracking-wide">
+                    password
+                  </label>
                   <input
                     data-testid="input-password"
                     type="password"
                     value={signupPassword}
-                    onChange={e => setSignupPassword(e.target.value)}
+                    onChange={(e) => setSignupPassword(e.target.value)}
                     placeholder="••••••••"
                     className={inputClass}
-                    onKeyDown={e => e.key === "Enter" && handleSignUp()}
+                    onKeyDown={(e) => e.key === "Enter" && handleSignUp()}
                   />
                 </div>
 
                 <button
                   data-testid="button-signup"
                   onClick={handleSignUp}
-                  disabled={loading || !signupEmail || !signupPassword}
+                  disabled={
+                    loading ||
+                    !signupName.trim() ||
+                    !signupEmail ||
+                    !signupPassword
+                  }
                   className="w-full gradient-btn py-3.5 text-base disabled:opacity-50 disabled:cursor-not-allowed mt-2"
                 >
                   {loading ? "one sec bestie..." : "create account ✨"}
@@ -195,12 +248,14 @@ export default function Landing() {
               /* ── SIGN IN FIELDS ── */
               <>
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-foreground/60 uppercase tracking-wide">username or email</label>
+                  <label className="text-xs font-semibold text-foreground/60 uppercase tracking-wide">
+                    username or email
+                  </label>
                   <input
                     data-testid="input-login-id"
                     type="text"
                     value={loginId}
-                    onChange={e => setLoginId(e.target.value)}
+                    onChange={(e) => setLoginId(e.target.value)}
                     placeholder="your username or email"
                     className={inputClass}
                     autoComplete="username"
@@ -209,15 +264,17 @@ export default function Landing() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-foreground/60 uppercase tracking-wide">password</label>
+                  <label className="text-xs font-semibold text-foreground/60 uppercase tracking-wide">
+                    password
+                  </label>
                   <input
                     data-testid="input-password"
                     type="password"
                     value={loginPassword}
-                    onChange={e => setLoginPassword(e.target.value)}
+                    onChange={(e) => setLoginPassword(e.target.value)}
                     placeholder="••••••••"
                     className={inputClass}
-                    onKeyDown={e => e.key === "Enter" && handleSignIn()}
+                    onKeyDown={(e) => e.key === "Enter" && handleSignIn()}
                   />
                 </div>
 
@@ -234,7 +291,10 @@ export default function Landing() {
           </div>
 
           <button
-            onClick={() => { setMode(isSignup ? "signin" : "signup"); setError(""); }}
+            onClick={() => {
+              setMode(isSignup ? "signin" : "signup");
+              setError("");
+            }}
             className="text-sm text-muted-foreground hover:text-primary transition-colors font-medium"
           >
             {isSignup
@@ -250,14 +310,36 @@ export default function Landing() {
   return (
     <div className="flex flex-col items-center justify-center min-h-[100dvh] relative px-6 text-center overflow-hidden">
       <div className="absolute inset-0 pointer-events-none">
-        <span className="absolute top-[10%] left-[10%] text-3xl sparkle text-pink-300">✦</span>
-        <span className="absolute top-[20%] right-[15%] text-2xl sparkle text-purple-300" style={{ animationDelay: "0.5s" }}>✧</span>
-        <span className="absolute bottom-[30%] left-[15%] text-4xl sparkle text-pink-400" style={{ animationDelay: "1s" }}>⊹</span>
-        <span className="absolute bottom-[20%] right-[20%] text-xl sparkle text-purple-400" style={{ animationDelay: "1.5s" }}>✦</span>
+        <span className="absolute top-[10%] left-[10%] text-3xl sparkle text-pink-300">
+          ✦
+        </span>
+        <span
+          className="absolute top-[20%] right-[15%] text-2xl sparkle text-purple-300"
+          style={{ animationDelay: "0.5s" }}
+        >
+          ✧
+        </span>
+        <span
+          className="absolute bottom-[30%] left-[15%] text-4xl sparkle text-pink-400"
+          style={{ animationDelay: "1s" }}
+        >
+          ⊹
+        </span>
+        <span
+          className="absolute bottom-[20%] right-[20%] text-xl sparkle text-purple-400"
+          style={{ animationDelay: "1.5s" }}
+        >
+          ✦
+        </span>
         <div className="absolute top-[15%] right-[-10%] glass-card p-3 transform rotate-12 blur-[1px] opacity-70 float">
-          <span className="text-xs font-bold text-foreground">saved ₹240 💅</span>
+          <span className="text-xs font-bold text-foreground">
+            saved ₹240 💅
+          </span>
         </div>
-        <div className="absolute bottom-[25%] left-[-5%] glass-card p-3 transform -rotate-12 blur-[1px] opacity-70 float" style={{ animationDelay: "1s" }}>
+        <div
+          className="absolute bottom-[25%] left-[-5%] glass-card p-3 transform -rotate-12 blur-[1px] opacity-70 float"
+          style={{ animationDelay: "1s" }}
+        >
           <span className="text-xs font-bold text-foreground">on track ⭐</span>
         </div>
       </div>
@@ -269,20 +351,26 @@ export default function Landing() {
 
         <div className="space-y-3">
           <h1 className="text-5xl font-extrabold font-serif gradient-text tracking-tight leading-tight">
-            Budget<br />Buddy
+            Budget
+            <br />
+            Buddy
           </h1>
           <p className="text-lg font-bold text-foreground/80 leading-snug">
             your money has trust issues.
-            <br />fix that.
+            <br />
+            fix that.
           </p>
           <p className="font-accent text-lg text-muted-foreground">
-            track every spend. slay every goal. finally, a finance app that gets you.
+            track every spend. slay every goal. finally, a finance app that gets
+            you.
           </p>
         </div>
 
         <div className="flex flex-wrap justify-center gap-2 py-2">
           <span className="chrome-badge px-3 py-1">✨ smart tracking</span>
-          <span className="chrome-badge px-3 py-1 shimmer">💸 savings goals</span>
+          <span className="chrome-badge px-3 py-1 shimmer">
+            💸 savings goals
+          </span>
           <span className="chrome-badge px-3 py-1">🐾 finance pet</span>
         </div>
 
