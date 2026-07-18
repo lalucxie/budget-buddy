@@ -1,11 +1,4 @@
-import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
-import type { User, Session } from "@supabase/supabase-js";
-import { supabase, type UserProfile } from "@/lib/supabase";
-
-type AuthContextValue = {
-  user: User | null;
-  session: Session | null;
-  profile: UserProfile | null;
+UserProfile | null;
   loading: boolean; // true only until the very first auth+profile check completes
 };
 
@@ -48,9 +41,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
-        fetchProfile(session.user.id);
+        setLoading(true);
+        fetchProfile(session.user.id).finally(() => setLoading(false));
       } else {
         setProfile(null);
+        setLoading(false);
       }
     });
 
