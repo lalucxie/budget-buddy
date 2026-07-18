@@ -1,4 +1,7 @@
-UserProfile | null;
+type AuthContextValue = {
+  user: User | null;
+  session: Session | null;
+  UserProfile | null;
   loading: boolean; // true only until the very first auth+profile check completes
 };
 
