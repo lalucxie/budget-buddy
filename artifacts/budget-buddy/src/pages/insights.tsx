@@ -106,7 +106,7 @@ export default function Insights() {
       localStorage.setItem(CACHE_KEY(user.id), JSON.stringify({ data: json.insights, ts: Date.now() }));
       setTimeout(() => setAnimIn(true), 50);
     } catch {
-      setError("couldn't reach the AI right now 😿");
+      setError("AI Insights coming soon! ");
     } finally {
       setAiLoading(false);
     }
@@ -338,7 +338,7 @@ export default function Insights() {
 
         {error && !aiLoading && (
           <div className="glass-card p-5 text-center space-y-3 rounded-3xl">
-            <p className="text-2xl">😿</p>
+            <p className="text-2xl">🚀</p>
             <p className="text-sm text-muted-foreground">{error}</p>
             <button onClick={() => fetchInsights(true)} className="gradient-btn px-5 py-2.5 text-sm font-bold text-white rounded-full">
               Try Again
